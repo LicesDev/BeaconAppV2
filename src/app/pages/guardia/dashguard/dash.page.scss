@@ -1,0 +1,160 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+@import "~bootstrap/dist/css/bootstrap.css";
+
+
+
+.navbar{
+  margin: auto;
+  background-color: #395886 !important;
+  height: 4rem;
+}
+.offcanvas.offcanvas-end[_ngcontent-ng-c570713897] {
+  width: 50% !important;
+}
+.offcanvas{
+  background-color: #628ecb !important;
+  color: #f0f3fa !important;
+  width: 55% !important;
+
+  .offcanvas-header{
+    border-bottom: 2px solid #b1c9ef !important;
+  }
+  .navbar-nav .nav-link.active{
+
+    padding: 0px !important;
+  }
+  .nav-item .icon-container {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #8aaee0;
+    margin-right: 10px;
+  }
+
+  .nav-item .icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  } 
+  .navbar-nav .nav-link:hover {
+    .icon-container {
+      background-color:#f0f3fa !important; 
+    }
+    .bx {
+      color: #b1c9ef !important;
+    }
+  }
+
+
+  .bx {
+    color: #395886 !important;
+    line-height: 0px !important;
+  }
+  i{
+    height: 0px;
+    font-size: x-large;
+  }
+  
+}
+
+.fondo{
+  --background: #f0f3fa !important;
+}
+
+ion-item {
+  --background: #f0f3fa !important;
+  overflow: initial !important;
+}
+
+
+.ion-activated{
+
+  --background-activated: #f0f3fa !important;
+
+}
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+.botonqr{
+    margin: auto;
+    flex: 0 0 70px; // Esto dará al botón un ancho fijo de 50px
+}
+.qr{
+  margin: auto;
+  width: 160px;
+  max-width: 160px;
+  max-height: 150px;
+  min-width: 50px;
+  border-radius: 50%;
+  filter: drop-shadow(0 0 0.2rem rgb(0, 0, 0));
+  border: 2px solid #b1c9ef;
+}
+ion-card {
+    background: #ffffff;
+    position: relative;
+    width: 100%;
+    margin: 10px auto; 
+    font-family: 'Montserrat', sans-serif;
+    border: 2px solid #b1c9ef;
+    filter: drop-shadow(0 0 0.2rem rgba(0, 0, 0, 0.575));
+  
+    .seccion{
+      margin-left: 20px;
+      color: #395886;
+      font-weight: 700;
+    }
+    
+    .card-content {
+      position: relative;
+      padding-left: 10px;
+      
+      
+      .color-line {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 5px;
+      }
+      
+      ion-card-header {
+        ion-card-title {
+          color: rgb(0, 0, 0);
+          font-size: 20px;
+          flex: 1 0 auto;
+          
+        }
+       
+      }
+  
+      ion-card-content {
+        color: rgb(0, 0, 0);
+        font-size: 16px;
+        
+      }
+    }
+    .flecha{
+        width: 2em;
+        margin-top: -2px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: -2px;
+        color: #f8b31c;
+    }
+    .asis{
+        margin-left: 10em;
+    }
+}
+
+.contenedor{
+  margin-top: 10px;
+}
+
+
+
+  

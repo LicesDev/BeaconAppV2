@@ -1,0 +1,44 @@
+<ion-header no-border class="cabecera">
+  <ion-toolbar class="cabecera">
+    <ion-buttons slot="start">
+      <ion-back-button class="back" defaultHref="/ruta-pagina-anterior" text=""></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css' rel='stylesheet' />
+
+</ion-header>
+
+<ion-content [fullscreen]="true" class="fondo">
+  <div class="logo"><img *ngIf="asignacion" [src]="asignacion?.foto" alt="Foto"></div>
+  <div class="contenedor">
+    <div class="card">
+      <ul>
+        <li>Nombre: {{asignacion?.nombre}}</li>
+        <li>Fecha: {{asignacion?.fecha}}</li>
+        <li>Hora Inicio: {{asignacion?.hora_inicio}}</li>
+        <li>Hora Fin: {{asignacion?.hora_fin}}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="contenedor">
+    <div class="card">
+      <ul>
+        <li class="mapa">Dirijase a: {{asignacion?.direccion}}</li>
+        <li><div id="map" style="width: 100%; height: 150px; border-radius: 2%;"></div> <!-- Cambia 'class' por 'id' -->
+          <app-map [sedeLat]="-33.450435" [sedeLng]="-70.651068"></app-map></li>
+      </ul>  
+    </div>
+  </div>
+
+  
+  <div class="boton">
+    <button class="botonasistencia" id="asistencia" [disabled]="1" [ngClass]="{'disabled': 1}" (click)="detectDevice()">Comenzar turno</button>
+  </div>
+  <div class="boton">
+    <button class="botonmarcar" id="botonmarcar" [disabled]="1" [ngClass]="{'disabled': 1}" (click)="detectDevice()">Marcar Colación</button>
+    <button class="botonmarcar" id="botonmarcar" [disabled]="1" [ngClass]="{'disabled': 1}" (click)="detectDevice()">Marcar Permanencia</button>
+  </div>
+  <div class="boton">
+    <button class="botonasistencia" id="asistencia" [disabled]="1" [ngClass]="{'disabled': 1}" (click)="detectDevice()">Reportar Incidencia</button>
+  </div>
+</ion-content>

@@ -1,0 +1,140 @@
+<ion-content class="fondo">
+
+  <!--Sidemenu-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css' rel='stylesheet' />
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  
+  <div class="navbar">
+  
+  <nav class="navbar navbar-dark bg-dark fixed-top">
+  
+    <div class="container-fluid" >
+      <a class="navbar-brand" routerLink="/dashboard-alumnos">
+        <img src="../../../../assets/img/Logo1.png" width="65em" height="65em" style="margin-bottom: 20px; margin-top: -15px;">
+      </a>    
+      <button style="margin-bottom: 20px; margin-top: -15px; border: 1px solid #f0f3fa !important;" class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">Beacon Security</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/dashboard-guarida">
+                <div class="icon-container">
+                  <div class="icon">
+                    <i class='bx bx-home'></i>
+                  </div>
+                </div>
+                Home
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/dashboard-guardia">
+                <div class="icon-container">
+                  <div class="icon">
+                    <i class='bx bx-shield-plus'></i>
+                  </div>
+                </div>
+                Tomar turnos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/dashboard-guardia">
+                <div class="icon-container">
+                  <div class="icon">
+                    <i class='bx bx-shield-alt-2' ></i>
+                  </div>
+                </div>
+                Mis Turnos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/dashboard-guardia">
+                <div class="icon-container">
+                  <div class="icon">
+                    <i class='bx bx-clipboard'></i>
+                  </div>
+                </div>
+                Solicitudes
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/dashboard-alumnos">
+                <div class="icon-container">
+                  <div class="icon">
+                    <i class='bx bx-money-withdraw'></i>
+                  </div>
+                </div>
+                Remuneraciones
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" (click)="logOut()">
+                <div class="icon-container">
+                  <div class="icon">
+                    <i class='bx bx-log-out-circle' ></i>
+                  </div>
+                </div>
+                Log Out
+              </a>
+            </li>
+          </ul>
+  
+        </div>
+      </div>
+    </div>
+  </nav>
+  </div>
+  
+  
+  <!--Carta-->
+  <div class="contenedor">
+    <ion-list >
+      <ion-item *ngFor="let asignacion of asignaciones; let i = index" lines="none" detail="false" button (click)="asignacion.expanded = !asignacion.expanded" >
+        <ion-card >
+          <div class="flex-container" >
+            
+            <div class="card-content">
+              <ion-card-header>
+                <ion-card-title>{{asignacion.nombre}}</ion-card-title>
+              </ion-card-header>
+              <p class="seccion">Fecha: {{asignacion.fecha}}</p>
+              <p class="seccion">Dirección: {{asignacion.direccion}}</p>
+              <ion-card-content>
+  
+                <ion-img *ngIf="!asignacion.expanded" src="./../../../assets/img/flecha.png" class="flecha"></ion-img>
+  
+                <div *ngIf="asignacion.expanded" >
+                  <p class="seccion">Hora inicio: {{asignacion.hora_inicio}}</p>
+                  <p class="seccion">Hora termino: {{asignacion.hora_fin}}</p>
+                  <p class="seccion">Remuneración: ${{asignacion.remuneracion}}</p>
+                  <ion-img *ngIf="asignacion.expanded" src="./../../../assets/img/flecha2.png" class="flecha"></ion-img>
+                </div>
+  
+              </ion-card-content>
+            </div>
+            <div class="boton">
+              <ion-button class="botonqr" fill="clear" (click)="navegar(asignacion)">
+                <img src="{{asignacion.foto}}" class="qr">
+              </ion-button>        
+          </div>
+          </div>
+        </ion-card>
+      </ion-item>
+    </ion-list>
+  </div>
+  
+  </ion-content>
+  
+  
+    <!--Carta-->
+  
+  
+  

@@ -1,0 +1,88 @@
+.fondo{
+    --background: rgb(57,88,134);
+    --background: linear-gradient(90deg, rgba(57,88,134,1) 0%, rgba(99,142,203,1) 10%, rgba(138,174,224,1) 20%,rgba(177,201,239,1) 30%, rgba(213,222,239,1) 40%,   rgba(213,222,239,1) 60%, rgba(177,201,239,1) 70%, rgba(138,174,224,1) 80%, rgba(99,142,203,1) 90%, rgba(57,88,134,1) 100%);
+}
+.imagen-header{
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    filter: drop-shadow(0 0 0.3rem rgb(0, 0, 0));
+}
+.imagen-footer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: fixed;
+    bottom: 0;
+    filter: drop-shadow(0 1 0.3rem rgb(0, 0, 0));
+}
+.logo{
+    width: 50%;
+}
+.logo2{
+    width: 30%;
+}
+.for{
+    font-weight: 700;
+    margin-bottom: 0% !important;
+}
+ion-card {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    
+}
+  
+ion-card-title {
+    text-align: center;
+}
+  
+ion-button {
+    margin-top: 20px;
+    --background: rgb(57,88,134) !important;
+    border-radius: 20% !important;
+}
+p {
+    text-align: center;
+}
+
+.carta{
+    width: 80%;
+    margin: auto;
+
+    @media screen and (min-width: 768px) {
+        width: 70%;
+    }
+    @media screen and (min-width: 1000px) {
+        width: 40%;
+    }
+}
+
+.contenedor{
+    margin-top: 2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2em;
+    @media screen and (min-width: 768px) {
+        margin-top: 5em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    @media screen and (min-width: 1000px) {
+        margin-top: 7em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+.correo{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.icono{
+    width: 3em;
+}

@@ -1,0 +1,46 @@
+.fondo{
+    --background: rgb(11,72,113);
+    --background: radial-gradient(circle, rgba(11,72,113,1) 65%, rgba(248,179,28,1) 100%);
+}
+.logo{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ 
+}
+.logo1{
+    width: 18em;
+    height: 18em;
+    
+}
+.slogan{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+   
+  }
+  .slogan1{
+      width: 20em;
+      height: 20em;
+      
+  }
+.spinner{
+    margin-left: 8em;
+    
+}
+ion-spinner {
+    width: 50px;
+    height: 50px;
+  }
+.duoc{
+    margin-top: -5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+   
+  }
+.duoc1{
+    width: 10em;
+    height: 10em;
+    
+}
