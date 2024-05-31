@@ -6,14 +6,13 @@ import { BleClient } from '@capacitor-community/bluetooth-le';
 import { BackgroundTask } from '@capawesome/capacitor-background-task';
 import { App } from '@capacitor/app';
 import { Preferences } from '@capacitor/preferences';
-import {BiometricAuth,
+import {
+  BiometricAuth,
   AndroidBiometryStrength,
   BiometryError,
   BiometryErrorType,
 } from '@aparajita/capacitor-biometric-auth';
 import { ChangeDetectorRef } from '@angular/core';
-
-
 
 @Component({
   selector: 'app-asistencia',
@@ -21,7 +20,6 @@ import { ChangeDetectorRef } from '@angular/core';
   styleUrls: ['./asistencia.page.scss'],
 })
 export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
-
   usuario: any = {};
   asistencia: any[] = [];
   asignacion: any;
@@ -32,19 +30,25 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
   botonColacionHabilitado = false;
   botonPermanenciaHabilitado = false;
   botonIncidenciaHabilitado = false;
+  botonFinColacionHabilitado = false;
   tiempoRestante = 2 * 60 * 60;
   intervalId: any;
   ubicacionGuardiaTask: any;
   ubicacionGuardiaTaskInterval = 10 * 60 * 1000;
 
-  constructor(private router: Router, private http: HttpClient, private route: ActivatedRoute,private cd: ChangeDetectorRef,) {}
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private route: ActivatedRoute,
+    private cd: ChangeDetectorRef
+  ) {}
 
   async ngOnInit() {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       this.asignacion = params;
     });
-    await this.obtenerUbicacionGuardia();  
-      
+    await this.obtenerUbicacionGuardia();
+
     // Recuperar el estado del contador del almacenamiento local solo cuando se inicializa el componente
     const { value } = await Preferences.get({ key: 'tiempoRestante' });
     this.tiempoRestante = value ? Number(value) : 2 * 60 * 60;
@@ -52,57 +56,103 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     // Configurar el listener de estado de la aplicación
     App.addListener('appStateChange', async ({ isActive }) => {
       if (isActive) {
-        
         // Recuperar el estado de los botones del almacenamiento local
-        const { value: botonComenzarVisible } = await Preferences.get({ key: 'botonComenzarVisible' });
-        const { value: botonFinalizarVisible } = await Preferences.get({ key: 'botonFinalizarVisible' });
-        let comenzar = document.getElementById("asistencia");
-        let finalizar = document.getElementById("finalizar");
+        const { value: botonComenzarVisible } = await Preferences.get({
+          key: 'botonComenzarVisible',
+        });
+        const { value: botonFinalizarVisible } = await Preferences.get({
+          key: 'botonFinalizarVisible',
+        });
+        let comenzar = document.getElementById('asistencia');
+        let finalizar = document.getElementById('finalizar');
         if (comenzar) {
-          comenzar.style.display = botonComenzarVisible === 'none' ? 'none' : ""; 
+          comenzar.style.display =
+            botonComenzarVisible === 'none' ? 'none' : '';
         }
         if (finalizar) {
-          finalizar.style.display = botonFinalizarVisible === '' ? '' : "none"; 
+          finalizar.style.display = botonFinalizarVisible === '' ? '' : 'none';
         }
-        const { value: botonColacionHabilitado } = await Preferences.get({ key: 'botonColacionHabilitado' });
-        const { value: botonIncidenciaHabilitado } = await Preferences.get({ key: 'botonIncidenciaHabilitado' });
+        const { value: botonIniColacionVisible } = await Preferences.get({
+          key: 'botonIniColacionVisible',
+        });
+        const { value: botonFinColacionVisible } = await Preferences.get({
+          key: 'botonFinColacionVisible',
+        });
+
+        let ini_colacion = document.getElementById('ini_colacion');
+        if (ini_colacion) {
+          ini_colacion.style.display = botonIniColacionVisible === 'none' ? 'none' : '';
+        }
+        let fin_colacion = document.getElementById('fin_colacion');
+        if (fin_colacion) {
+          fin_colacion.style.display = botonFinColacionVisible === '' ? '' : 'none';
+        }
+
+        const { value: botonColacionHabilitado } = await Preferences.get({
+          key: 'botonColacionHabilitado',
+        });
+        const { value: botonIncidenciaHabilitado } = await Preferences.get({
+          key: 'botonIncidenciaHabilitado',
+        });
         this.botonColacionHabilitado = botonColacionHabilitado === 'true';
         this.botonIncidenciaHabilitado = botonIncidenciaHabilitado === 'true';
       } else {
         // Guardar el estado del contador en el almacenamiento local cuando la aplicación se minimiza o cierra
         await Preferences.set({
           key: 'tiempoRestante',
-          value: this.tiempoRestante.toString()
+          value: this.tiempoRestante.toString(),
         });
         this.stopCounter();
       }
     });
-
   }
 
   async ngAfterViewInit() {
     this.startCounter();
-    this.detectDevice()
+    this.detectDevice();
     // Recuperar el estado de los botones del almacenamiento local
-    const { value: botonComenzarVisible } = await Preferences.get({ key: 'botonComenzarVisible' });
-    const { value: botonFinalizarVisible } = await Preferences.get({ key: 'botonFinalizarVisible' });
-    let comenzar = document.getElementById("asistencia");
-    let finalizar = document.getElementById("finalizar");
+    const { value: botonComenzarVisible } = await Preferences.get({
+      key: 'botonComenzarVisible',
+    });
+    const { value: botonFinalizarVisible } = await Preferences.get({
+      key: 'botonFinalizarVisible',
+    });
+    let comenzar = document.getElementById('asistencia');
+    let finalizar = document.getElementById('finalizar');
     if (comenzar) {
-      comenzar.style.display = botonComenzarVisible === 'none' ? 'none' : ""; 
+      comenzar.style.display = botonComenzarVisible === 'none' ? 'none' : '';
     }
     if (finalizar) {
-      finalizar.style.display = botonFinalizarVisible === '' ? '' : "none"; 
+      finalizar.style.display = botonFinalizarVisible === '' ? '' : 'none';
     }
-    const { value: botonColacionHabilitado } = await Preferences.get({ key: 'botonColacionHabilitado' });
-    const { value: botonIncidenciaHabilitado } = await Preferences.get({ key: 'botonIncidenciaHabilitado' });
+    const { value: botonIniColacionVisible } = await Preferences.get({
+      key: 'botonIniColacionVisible',
+    });
+    const { value: botonFinColacionVisible } = await Preferences.get({
+      key: 'botonFinColacionVisible',
+    });
+
+    let ini_colacion = document.getElementById('ini_colacion');
+    if (ini_colacion) {
+      ini_colacion.style.display = botonIniColacionVisible === 'none' ? 'none' : '';
+    }
+    let fin_colacion = document.getElementById('fin_colacion');
+    if (fin_colacion) {
+      fin_colacion.style.display = botonFinColacionVisible === '' ? '' : 'none';
+    }
+    const { value: botonColacionHabilitado } = await Preferences.get({
+      key: 'botonColacionHabilitado',
+    });
+    const { value: botonIncidenciaHabilitado } = await Preferences.get({
+      key: 'botonIncidenciaHabilitado',
+    });
     this.botonColacionHabilitado = botonColacionHabilitado === 'true';
     this.botonIncidenciaHabilitado = botonIncidenciaHabilitado === 'true';
-     // Recuperar el estado del contador del almacenamiento local cuando la aplicación vuelve a estar activa
-     const { value } = await Preferences.get({ key: 'tiempoRestante' });
-     this.tiempoRestante = value ? Number(value) : this.tiempoRestante;
-         // Reiniciar el contador
-     this.startCounter();
+    // Recuperar el estado del contador del almacenamiento local cuando la aplicación vuelve a estar activa
+    const { value } = await Preferences.get({ key: 'tiempoRestante' });
+    this.tiempoRestante = value ? Number(value) : this.tiempoRestante;
+    // Reiniciar el contador
+    this.startCounter();
   }
 
   ngOnDestroy() {
@@ -113,8 +163,8 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     try {
       const options: PositionOptions = {
         enableHighAccuracy: true,
-        maximumAge: 0, 
-        timeout: 10000
+        maximumAge: 0,
+        timeout: 10000,
       };
       const coordinates = await Geolocation.getCurrentPosition(options);
       this.lat = coordinates.coords.latitude;
@@ -138,10 +188,10 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
         // Guardar el estado del contador en el almacenamiento local cada segundo
         await Preferences.set({
           key: 'tiempoRestante',
-          value: this.tiempoRestante.toString()
+          value: this.tiempoRestante.toString(),
         });
 
-        this.cd.detectChanges();  // Detectar los cambios
+        this.cd.detectChanges(); // Detectar los cambios
       } else {
         clearInterval(this.intervalId);
         this.botonPermanenciaHabilitado = true;
@@ -191,7 +241,6 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-
   async comenzarTurno() {
     console.log('Turno Comenzado');
 
@@ -212,34 +261,33 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
       this.startCounter();
       // Si la autenticación es exitosa, procedemos con el resto del método
       // Ocultar botón de comenzar y mostrar botón de finalizar
-      let comenzar = document.getElementById("asistencia");
+      let comenzar = document.getElementById('asistencia');
       if (comenzar) {
-        comenzar.style.display = "none"; 
+        comenzar.style.display = 'none';
         await Preferences.set({
           key: 'botonComenzarVisible',
-          value: 'none'
+          value: 'none',
         });
       }
-      let finalizar = document.getElementById("finalizar");
+      let finalizar = document.getElementById('finalizar');
       if (finalizar) {
-        finalizar.style.display = ""; 
+        finalizar.style.display = '';
         await Preferences.set({
           key: 'botonFinalizarVisible',
-          value: ''
+          value: '',
         });
       }
-      
 
       // Habilitar botones de colación e incidencia
       this.botonColacionHabilitado = true;
       this.botonIncidenciaHabilitado = true;
       await Preferences.set({
         key: 'botonColacionHabilitado',
-        value: 'true'
+        value: 'true',
       });
       await Preferences.set({
         key: 'botonIncidenciaHabilitado',
-        value: 'true'
+        value: 'true',
       });
       this.cd.detectChanges();
       // Obtener la hora actual y formatearla como "HH:MM"
@@ -263,35 +311,50 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
       };
 
       console.log(body);
-
+      interface AsistenciaResponse {
+        id_asistencia: number;
+        hora_ini_1: string;
+        hora_fin_1: string | null;
+        hora_ini_2: string | null;
+        hora_fin_2: string | null;
+        remuneracion_final: number | null;
+        id_descuento: number;
+        id_asignacion: number;
+      }
       // Realizar la solicitud POST a la API
-      this.http.post('https://osolices.pythonanywhere.com/asistencia/', body)
+      this.http
+        .post('https://osolices.pythonanywhere.com/asistencia/', body)
         .subscribe(
-          response => {
-            console.log('Respuesta de la API:', response);
-            
+          (response: any) => {
+            const asistenciaResponse = response as AsistenciaResponse;
+            console.log('Respuesta de la API:', asistenciaResponse);
+            // Guardar todos los datos de la asistencia en el almacenamiento local
+            Preferences.set({
+              key: 'asistencia',
+              value: JSON.stringify(asistenciaResponse),
+            });
           },
-          error => {
+          (error) => {
             console.error('Error al realizar la solicitud POST:', error);
           }
         );
     } catch (error) {
       if (error instanceof BiometryError) {
         if (error.code !== BiometryErrorType.userCancel) {
-          console.error('Error en la autenticación por huella dactilar:', error.message);
+          console.error(
+            'Error en la autenticación por huella dactilar:',
+            error.message
+          );
         }
       }
     }
   }
 
-  
-  
-
   async permanencia() {
     const taskId = await BackgroundTask.beforeExit(async () => {
       await Preferences.set({
         key: 'tiempoRestante',
-        value: this.tiempoRestante.toString()
+        value: this.tiempoRestante.toString(),
       });
 
       BackgroundTask.finish({ taskId });
@@ -302,7 +365,9 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = seconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    return `${hours.toString().padStart(2, '0')}:${minutes
+      .toString()
+      .padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   }
 
   goToDash() {
@@ -322,18 +387,23 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
         rut_alumno: `https://osolices.pythonanywhere.com/alumnos/${rut}/`,
         id_clase: `https://osolices.pythonanywhere.com/clases/${clase}/`,
         fecha: fecha,
-        estado: estado
+        estado: estado,
       };
 
       console.log(body);
 
-      this.http.post('https://osolices.pythonanywhere.com/asistencias/', body).subscribe(response => {
-        console.log(response);
-        this.presente('¡Estás Presente!');
-      }, error => {
-        console.error(error);
-        this.presente('Ya estás presente');
-      });
+      this.http
+        .post('https://osolices.pythonanywhere.com/asistencias/', body)
+        .subscribe(
+          (response) => {
+            console.log(response);
+            this.presente('¡Estás Presente!');
+          },
+          (error) => {
+            console.error(error);
+            this.presente('Ya estás presente');
+          }
+        );
     } else {
       console.log('El array asistencia está vacío');
     }
@@ -373,7 +443,10 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
         // Enviar la ubicación del guardia al servidor
         await this.enviarUbicacionGuardia(latitud, longitud, timestamp);
       } catch (error) {
-        console.error('Error en el seguimiento de ubicación del guardia:', error);
+        console.error(
+          'Error en el seguimiento de ubicación del guardia:',
+          error
+        );
       }
     }, this.ubicacionGuardiaTaskInterval);
 
@@ -381,15 +454,21 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     await this.ubicacionGuardiaTask();
   }
 
-  async enviarUbicacionGuardia(latitud: number, longitud: number, timestamp: number) {
+  async enviarUbicacionGuardia(
+    latitud: number,
+    longitud: number,
+    timestamp: number
+  ) {
     try {
       const body = {
         latitud: latitud,
         longitud: longitud,
-        timestamp: timestamp
+        timestamp: timestamp,
       };
 
-      await this.http.post('https://osolices.pythonanywhere.com/ubicacion_guardia/', body).toPromise();
+      await this.http
+        .post('https://osolices.pythonanywhere.com/ubicacion_guardia/', body)
+        .toPromise();
       console.log('Ubicación del guardia enviada:', latitud, longitud);
     } catch (error) {
       console.error('Error al enviar la ubicación del guardia:', error);
@@ -397,56 +476,177 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async finalizarTurno() {
-    if (this.ubicacionGuardiaTask) {
-      // Detener la tarea de seguimiento de ubicación del guardia al finalizar el turno
-      clearInterval(this.ubicacionGuardiaTask);
-      console.log('Tarea de seguimiento de ubicación del guardia detenida.');
+    interface AsistenciaResponse {
+      id_asistencia: number;
+      hora_ini_1: string;
+      hora_fin_1: string | null;
+      hora_ini_2: string | null;
+      hora_fin_2: string | null;
+      remuneracion_final: number | null;
+      id_descuento: number;
+      id_asignacion: number;
     }
+    const { value } = await Preferences.get({ key: 'asistencia' });
+    if (value !== null) {
+      const asistencia = JSON.parse(value) as AsistenciaResponse;
+
+      // Actualizar la hora de inicio de la colación
+      const horaActual = new Date();
+      const horas = horaActual.getHours().toString().padStart(2, '0');
+      const minutos = horaActual.getMinutes().toString().padStart(2, '0');
+      const horaFormateada = `${horas}:${minutos}`;
+      asistencia.hora_fin_2 = horaFormateada;
+
+      this.http
+      .put(
+        `https://osolices.pythonanywhere.com/asistencia/${asistencia.id_asistencia}/`,
+        asistencia
+      )
+      .subscribe(
+        async (response: any) => { // Agrega 'async' aquí
+          const updatedAsistencia = response as AsistenciaResponse;
+          console.log('Respuesta de la API:', updatedAsistencia);
+          if (this.ubicacionGuardiaTask) {
+            // Detener la tarea de seguimiento de ubicación del guardia al finalizar el turno
+            clearInterval(this.ubicacionGuardiaTask);
+            console.log('Tarea de seguimiento de ubicación del guardia detenida.');
+          }
+          this.stopCounter();
+      
+          // Eliminar todos los datos de Preferences
+          await Preferences.clear(); // Ahora puedes usar 'await' aquí
+          console.log('Todos los datos de Preferences han sido eliminados.');
+          this.cd.detectChanges();
+        },
+        (error) => {
+          console.error('Error al realizar la solicitud PUT:', error);
+        }
+      );
+    } else {
+      console.error('No se encontró la asistencia en el almacenamiento local');
+    }
+    
   }
 
   async marcarInicioColacion() {
-    const horaActual = new Date();
+    interface AsistenciaResponse {
+      id_asistencia: number;
+      hora_ini_1: string;
+      hora_fin_1: string | null;
+      hora_ini_2: string | null;
+      hora_fin_2: string | null;
+      remuneracion_final: number | null;
+      id_descuento: number;
+      id_asignacion: number;
+    }
+    const { value } = await Preferences.get({ key: 'asistencia' });
+    if (value !== null) {
+      const asistencia = JSON.parse(value) as AsistenciaResponse;
+
+      // Actualizar la hora de inicio de la colación
+      const horaActual = new Date();
       const horas = horaActual.getHours().toString().padStart(2, '0');
       const minutos = horaActual.getMinutes().toString().padStart(2, '0');
       const horaFormateada = `${horas}:${minutos}`;
-    const body = {
-      hora_fin_1: horaFormateada,
-    };
+      asistencia.hora_fin_1 = horaFormateada;
 
-    console.log(body);
+      this.http
+        .put(
+          `https://osolices.pythonanywhere.com/asistencia/${asistencia.id_asistencia}/`,
+          asistencia
+        )
+        .subscribe(
+          (response: any) => {
+            const updatedAsistencia = response as AsistenciaResponse;
+            console.log('Respuesta de la API:', updatedAsistencia);
 
-    this.http.put('https://osolices.pythonanywhere.com/asistencia/', body)
-      .subscribe(
-        response => {
-          console.log('Respuesta de la API:', response);
-        },
-        error => {
-          console.error('Error al realizar la solicitud POST:', error);
-        }
-      );
+            // Guardar la asistencia actualizada en el almacenamiento local
+            Preferences.set({
+              key: 'asistencia',
+              value: JSON.stringify(updatedAsistencia),
+            });
+
+            let ini_colacion = document.getElementById('ini_colacion');
+            if (ini_colacion) {
+              ini_colacion.style.display = 'none';
+              Preferences.set({
+                key: 'botonIniColacionVisible',
+                value: 'none',
+              });
+            }
+            let fin_colacion = document.getElementById('fin_colacion');
+            if (fin_colacion) {
+              fin_colacion.style.display = '';
+              Preferences.set({
+                key: 'botonFinColacionVisible',
+                value: '',
+              });
+            }
+            Preferences.set({
+              key: 'botonColacionHabilitado',
+              value: 'false',
+            });
+      
+            this.botonColacionHabilitado = false;
+            this.botonFinColacionHabilitado =true;
+            this.cd.detectChanges();
+          },
+          (error) => {
+            console.error('Error al realizar la solicitud PUT:', error);
+          }
+        );
+    } else {
+      console.error('No se encontró la asistencia en el almacenamiento local');
+    }
   }
 
   async marcarFinColacion() {
-    const horaActual = new Date();
+    interface AsistenciaResponse {
+      id_asistencia: number;
+      hora_ini_1: string;
+      hora_fin_1: string | null;
+      hora_ini_2: string | null;
+      hora_fin_2: string | null;
+      remuneracion_final: number | null;
+      id_descuento: number;
+      id_asignacion: number;
+    }
+    const { value } = await Preferences.get({ key: 'asistencia' });
+    if (value !== null) {
+      const asistencia = JSON.parse(value) as AsistenciaResponse;
+
+      // Actualizar la hora de inicio de la colación
+      const horaActual = new Date();
       const horas = horaActual.getHours().toString().padStart(2, '0');
       const minutos = horaActual.getMinutes().toString().padStart(2, '0');
       const horaFormateada = `${horas}:${minutos}`;
-    const body = {
-      hora_ini_2: horaFormateada,
-    };
+      asistencia.hora_ini_2 = horaFormateada;
 
-    console.log(body);
+      this.http
+        .put(
+          `https://osolices.pythonanywhere.com/asistencia/${asistencia.id_asistencia}/`,
+          asistencia
+        )
+        .subscribe(
+          (response: any) => {
+            const updatedAsistencia = response as AsistenciaResponse;
+            console.log('Respuesta de la API:', updatedAsistencia);
 
-    // Realizar la solicitud POST a la API
-    this.http.put('https://osolices.pythonanywhere.com/asistencia/', body)
-      .subscribe(
-        response => {
-          console.log('Respuesta de la API:', response);
-        },
-        error => {
-          console.error('Error al realizar la solicitud POST:', error);
-        }
-      );
+            // Guardar la asistencia actualizada en el almacenamiento local
+            Preferences.set({
+              key: 'asistencia',
+              value: JSON.stringify(updatedAsistencia),
+            });
+            
+            this.botonFinColacionHabilitado =true;
+            this.cd.detectChanges();
+          },
+          (error) => {
+            console.error('Error al realizar la solicitud PUT:', error);
+          }
+        );
+    } else {
+      console.error('No se encontró la asistencia en el almacenamiento local');
+    }
   }
-
 }

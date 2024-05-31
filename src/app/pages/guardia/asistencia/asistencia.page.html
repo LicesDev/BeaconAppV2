@@ -33,10 +33,11 @@
   
   <div class="boton">
     <button class="botonasistencia" id="asistencia" style="display:'' " [disabled]="!botonTurnoHabilitado" [ngClass]="{'disabled': !botonTurnoHabilitado}" (click)="comenzarTurno()">Comenzar turno</button>
-    <button class="botonfinalizar" id="finalizar" style="display: none;" (click)="comenzarTurno()">Finalizar turno</button>
+    <button class="botonfinalizar" id="finalizar" style="display: none;" (click)="finalizarTurno()">Finalizar turno</button>
   </div>
   <div class="boton">
-    <button class="botonmarcar" id="botonmarcar" [disabled]="!botonColacionHabilitado" [ngClass]="{'disabled': !botonColacionHabilitado}" (click)="marcarInicioColacion()">Colación</button>
+    <button class="botonmarcar" id="ini_colacion" style="display:'' " [disabled]="!botonColacionHabilitado" [ngClass]="{'disabled': !botonColacionHabilitado}" (click)="marcarInicioColacion()">Colación</button>
+    <button class="botonmarcar" id="fin_colacion" style="display: none;" [disabled]="!botonFinColacionHabilitado" [ngClass]="{'disabled': !botonFinColacionHabilitado}" (click)="marcarFinColacion()">Fin Colación</button>
     <button class="botonmarcar" id="botonmarcar" [disabled]="!botonPermanenciaHabilitado" [ngClass]="{'disabled': !botonPermanenciaHabilitado}" (click)="detectDevice()">
       Permanencia <br>({{ formatTime(tiempoRestante) }})
     </button>
