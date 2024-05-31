@@ -637,8 +637,8 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
               key: 'asistencia',
               value: JSON.stringify(updatedAsistencia),
             });
-            
-            this.botonFinColacionHabilitado =true;
+
+            this.botonFinColacionHabilitado =false;
             this.cd.detectChanges();
           },
           (error) => {
