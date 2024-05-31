@@ -52,9 +52,8 @@
   }
   .card ul li{
     font-size: 1em; // Tamaño de letra más grande
-    border-top: 1px solid #ddd; // Línea superior
     border-bottom: 1px solid #ddd; // Línea inferior
-    padding: 10px 0; // Espacio vertical
+    padding: 5px 0px 5px 0px;
   }
 
   .boton{
@@ -68,6 +67,15 @@
     height: 50px;
     color: rgb(255, 255, 255);
     background-image: linear-gradient(rgb(57, 88, 134) 0%, rgb(50, 75, 114) 100%);
+    border-radius: .5rem; /* Hace que el botón sea más ovalado */
+    font-size: large;
+    box-shadow: inset 0 2px 0 0 hsla(0, 0%, 100%, .2), inset 0 -1px 0 0 rgba(0, 0, 0, .25), 0 2px 6px 0 rgba(0, 0, 0, .1);
+  }
+  .botonfinalizar{
+    width: 50%;
+    height: 50px;
+    color: rgb(255, 255, 255);
+    background-image: linear-gradient(rgb(172, 47, 38) 0%, rgb(209, 31, 31) 100%);
     border-radius: .5rem; /* Hace que el botón sea más ovalado */
     font-size: large;
     box-shadow: inset 0 2px 0 0 hsla(0, 0%, 100%, .2), inset 0 -1px 0 0 rgba(0, 0, 0, .25), 0 2px 6px 0 rgba(0, 0, 0, .1);
@@ -86,7 +94,6 @@
     border-radius: .5rem;
     font-size: large;
     box-shadow: inset 0 2px 0 0 hsla(0, 0%, 100%, .2), inset 0 -1px 0 0 rgba(0, 0, 0, .25), 0 2px 6px 0 rgba(0, 0, 0, .1);
-    padding: 2px;
   }
   .back{
     color: #ffffff;
