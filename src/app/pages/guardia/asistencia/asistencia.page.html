@@ -32,13 +32,13 @@
 
   
   <div class="boton">
-    <button class="botonasistencia" id="asistencia" style="display:'' " [disabled]="!botonTurnoHabilitado" [ngClass]="{'disabled': !botonTurnoHabilitado}" (click)="comenzarTurno()">Comenzar turno</button>
-    <button class="botonfinalizar" id="finalizar" style="display: none;" (click)="finalizarTurno()">Finalizar turno</button>
+    <button class="botonasistencia" id="asistencia" style="display:'' " [disabled]="!botonTurnoHabilitado" [ngClass]="{'disabled': !botonTurnoHabilitado}" (click)="confirmarComenzarTurno()">Comenzar turno</button>
+    <button class="botonfinalizar" id="finalizar" style="display: none;" (click)="confirmarFinalizarTurno()">Finalizar turno</button>
   </div>
   <div class="boton">
-    <button class="botonmarcar" id="ini_colacion" style="display:'' " [disabled]="!botonColacionHabilitado" [ngClass]="{'disabled': !botonColacionHabilitado}" (click)="marcarInicioColacion()">Colación</button>
-    <button class="botonmarcar" id="fin_colacion" style="display: none;" [disabled]="!botonFinColacionHabilitado" [ngClass]="{'disabled': !botonFinColacionHabilitado}" (click)="marcarFinColacion()">Fin Colación</button>
-    <button class="botonmarcar" id="botonmarcar" [disabled]="!botonPermanenciaHabilitado" [ngClass]="{'disabled': !botonPermanenciaHabilitado}" (click)="detectDevice()">
+    <button class="botonmarcar" id="ini_colacion" style="display:'' " [disabled]="!botonColacionHabilitado" [ngClass]="{'disabled': !botonColacionHabilitado}" (click)="confirmarIniColacion()">Colación</button>
+    <button class="botonmarcar" id="fin_colacion" style="display: none;" [disabled]="!botonFinColacionHabilitado" [ngClass]="{'disabled': !botonFinColacionHabilitado}" (click)="confirmarFinColacion()">Fin Colación</button>
+    <button class="botonmarcar" id="botonmarcar" [disabled]="!botonPermanenciaHabilitado" [ngClass]="{'disabled': !botonPermanenciaHabilitado}" (click)="permanencia()">
       Permanencia <br>({{ formatTime(tiempoRestante) }})
     </button>
   </div>

@@ -7,7 +7,9 @@ import { Http } from '@capacitor-community/http';
 
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-
+import { Geolocation, PermissionStatus } from '@capacitor/geolocation';
+import { LocalNotifications } from '@capacitor/local-notifications';
+import { BluetoothLe, RequestBleDeviceOptions } from '@capacitor-community/bluetooth-le';
 
 
 @Component({
@@ -27,9 +29,22 @@ export class LoginPage implements OnInit {
     private authService: AuthService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.solicitarPermisos();
+  }
 
 
+  
+  async solicitarPermisos() {
+    // Solicitar permiso para acceder a la ubicación
+    const permisoUbicacion = await Geolocation.requestPermissions();
+  
+    if (permisoUbicacion.location === 'granted') {
+      // Solicitar permiso para enviar notificaciones solo si el permiso de ubicación fue concedido
+      await LocalNotifications.requestPermissions();
+    }
+  }
+  
   async login() {
     // Verificar si los campos están vacíos
     if (!this.usuario || !this.pass) {

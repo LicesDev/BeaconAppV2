@@ -13,6 +13,9 @@ import {
   BiometryErrorType,
 } from '@aparajita/capacitor-biometric-auth';
 import { ChangeDetectorRef } from '@angular/core';
+import { LocalNotifications } from '@capacitor/local-notifications';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-asistencia',
@@ -31,10 +34,11 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
   botonPermanenciaHabilitado = false;
   botonIncidenciaHabilitado = false;
   botonFinColacionHabilitado = false;
-  tiempoRestante = 2 * 60 * 60;
   intervalId: any;
+  timeoutId: any;
   ubicacionGuardiaTask: any;
   ubicacionGuardiaTaskInterval = 10 * 60 * 1000;
+  tiempoRestante = 2 * 60 * 60;
 
   constructor(
     private router: Router,
@@ -81,11 +85,13 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
 
         let ini_colacion = document.getElementById('ini_colacion');
         if (ini_colacion) {
-          ini_colacion.style.display = botonIniColacionVisible === 'none' ? 'none' : '';
+          ini_colacion.style.display =
+            botonIniColacionVisible === 'none' ? 'none' : '';
         }
         let fin_colacion = document.getElementById('fin_colacion');
         if (fin_colacion) {
-          fin_colacion.style.display = botonFinColacionVisible === '' ? '' : 'none';
+          fin_colacion.style.display =
+            botonFinColacionVisible === '' ? '' : 'none';
         }
 
         const { value: botonColacionHabilitado } = await Preferences.get({
@@ -102,13 +108,12 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
           key: 'tiempoRestante',
           value: this.tiempoRestante.toString(),
         });
-        this.stopCounter();
       }
     });
   }
 
   async ngAfterViewInit() {
-    this.startCounter();
+
     this.detectDevice();
     // Recuperar el estado de los botones del almacenamiento local
     const { value: botonComenzarVisible } = await Preferences.get({
@@ -134,7 +139,8 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
 
     let ini_colacion = document.getElementById('ini_colacion');
     if (ini_colacion) {
-      ini_colacion.style.display = botonIniColacionVisible === 'none' ? 'none' : '';
+      ini_colacion.style.display =
+        botonIniColacionVisible === 'none' ? 'none' : '';
     }
     let fin_colacion = document.getElementById('fin_colacion');
     if (fin_colacion) {
@@ -148,11 +154,19 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     });
     this.botonColacionHabilitado = botonColacionHabilitado === 'true';
     this.botonIncidenciaHabilitado = botonIncidenciaHabilitado === 'true';
+
     // Recuperar el estado del contador del almacenamiento local cuando la aplicación vuelve a estar activa
     const { value } = await Preferences.get({ key: 'tiempoRestante' });
     this.tiempoRestante = value ? Number(value) : this.tiempoRestante;
-    // Reiniciar el contador
-    this.startCounter();
+
+    // Recuperar la hora de finalización del almacenamiento local
+    const { value: endTimeValue } = await Preferences.get({ key: 'endTime' });
+    const endTime = endTimeValue ? Number(endTimeValue) : null;
+
+    // Si el temporizador ya ha sido iniciado (es decir, endTime no es null y tiempoRestante es menor que 2 horas), entonces reiniciar el contador
+    if (endTime && this.tiempoRestante < 2 * 60 * 60) {
+      this.startCounter();
+    }
   }
 
   ngOnDestroy() {
@@ -175,30 +189,98 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
       console.error('Error al obtener la ubicación del guardia:', error);
     }
   }
+  // Método para iniciar el temporizador
   startCounter() {
     // Asegurarse de que no hay otros intervalos ejecutándose antes de crear uno nuevo
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
-
+  
     this.intervalId = setInterval(async () => {
+      // Calcular el tiempo restante
+      this.tiempoRestante = await this.getRemainingTime();
+  
       if (this.tiempoRestante > 0) {
         this.tiempoRestante--;
-
+  
         // Guardar el estado del contador en el almacenamiento local cada segundo
         await Preferences.set({
           key: 'tiempoRestante',
           value: this.tiempoRestante.toString(),
         });
-
+  
         this.cd.detectChanges(); // Detectar los cambios
       } else {
         clearInterval(this.intervalId);
         this.botonPermanenciaHabilitado = true;
+        this.cd.detectChanges(); 
+        this.alertaPermanencia();
+
+        // Iniciar un temporizador para ejecutar automáticamente finalizarTurno() después de 5 minutos
+        this.timeoutId = setTimeout(() => {
+          this.alerta('Turno Finalizado','Se finalizo el turno por no marcación');
+          this.finalizarTurno();
+        }, 5 * 60 * 1000);
       }
     }, 1000);
   }
+  // Método para obtener el tiempo restante
+  async getRemainingTime() {
+    // Recuperar la hora tope del almacenamiento persistente
+    const { value } = await Preferences.get({ key: 'endTime' });
+    const endTime = value ? Number(value) : null;
 
+    if (endTime) {
+      // Calcular el tiempo restante
+      const now = new Date().getTime();
+      const remainingTime = endTime - now; // en milisegundos
+
+      return remainingTime > 0 ? Math.round(remainingTime / 1000) : 0; // convertir a segundos
+    } else {
+      return 2 * 60 * 60; // 2 horas en segundos
+    }
+  }
+  alerta(mensaje:string, cuerpo:string){
+    const notificationId = Math.floor(Math.random() * 1000000);
+    const now = new Date(); // Crear un nuevo objeto Date con la hora actual
+  
+    LocalNotifications.schedule({
+      notifications: [
+        {
+          id: notificationId,
+          title: mensaje,
+          body: cuerpo,
+          schedule: { at: now },
+        },
+      ],
+    });
+  }
+  alertaPermanencia() {
+    // Programar una notificación para dentro de 2 horas
+    const notificationId = Math.floor(Math.random() * 1000000);
+    const twoHoursFromNow = new Date(new Date().getTime() + 2 * 60 * 60 * 1000); // 2 horas después
+  
+    LocalNotifications.schedule({
+      notifications: [
+        {
+          id: notificationId,
+          title: 'Permanencia',
+          body: 'Debes marcar la permanencia.',
+          schedule: { at: twoHoursFromNow },
+        },
+      ],
+    });
+  }
+  
+
+  formatTime(seconds: number): string {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+    return `${hours.toString().padStart(2, '0')}:${minutes
+      .toString()
+      .padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  }
   stopCounter() {
     if (this.intervalId) {
       clearInterval(this.intervalId);
@@ -206,41 +288,64 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async detectDevice() {
-    try {
-      console.log('INICIALIZANDO BLUETOOTH');
-      await BleClient.initialize();
+  try {
+    console.log('INICIALIZANDO BLUETOOTH');
+    await BleClient.initialize();
 
-      console.log('VERIFICANDO ESTADO DEL BLUETOOTH');
-      const isEnabled = await BleClient.isEnabled();
-      if (!isEnabled) {
-        console.log('BLUETOOTH NO ESTÁ ACTIVADO');
-        if (BleClient.requestEnable) {
-          await BleClient.requestEnable();
-        }
-        return;
+    console.log('VERIFICANDO ESTADO DEL BLUETOOTH');
+    const isEnabled = await BleClient.isEnabled();
+    if (!isEnabled) {
+      console.log('BLUETOOTH NO ESTÁ ACTIVADO');
+      if (BleClient.requestEnable) {
+        await BleClient.requestEnable();
       }
+      return;
+    }
 
-      console.log('ESCANEANDO');
-      const targetDeviceName = 'Sede Test';
+    console.log('ESCANEANDO');
+    const targetDeviceName = 'Sede Test';
+    let deviceFound = false;
 
+    while (!deviceFound) {
       await BleClient.requestLEScan(
         { name: targetDeviceName },
         (scanResult) => {
-          if (scanResult.device.name === targetDeviceName) {
+          if (scanResult.device && scanResult.device.name === targetDeviceName) {
             console.log('BALIZA OBJETIVO ENCONTRADA:', scanResult.device);
             this.botonTurnoHabilitado = true;
+            deviceFound = true;
           }
         }
       );
 
-      setTimeout(() => {
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      if (!deviceFound) {
+        console.log('Dispositivo no encontrado, reintentando...');
         BleClient.stopLEScan();
-      }, 5000);
-    } catch (error) {
-      console.error('Error al inicializar el Bluetooth:', error);
+      }
+    }
+  } catch (error) {
+    console.error('Error al inicializar el Bluetooth:', error);
+  }
+}
+
+
+  async confirmarComenzarTurno() {
+    const result = await Swal.fire({
+      title: 'Confirmación',
+      text: '¿Estás seguro de que quieres comenzar el turno?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, comenzar',
+      cancelButtonText: 'No, cancelar',
+      heightAuto: false,
+      confirmButtonColor: 'rgb(57, 88, 134)',
+    });
+  
+    if (result.isConfirmed) {
+      await this.comenzarTurno();
     }
   }
-
   async comenzarTurno() {
     console.log('Turno Comenzado');
 
@@ -257,8 +362,6 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
         androidBiometryStrength: AndroidBiometryStrength.weak,
       });
 
-      this.permanencia();
-      this.startCounter();
       // Si la autenticación es exitosa, procedemos con el resto del método
       // Ocultar botón de comenzar y mostrar botón de finalizar
       let comenzar = document.getElementById('asistencia');
@@ -277,7 +380,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
           value: '',
         });
       }
-
+      this.cd.detectChanges(); // Detectar los cambios
       // Habilitar botones de colación e incidencia
       this.botonColacionHabilitado = true;
       this.botonIncidenciaHabilitado = true;
@@ -290,6 +393,18 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
         value: 'true',
       });
       this.cd.detectChanges();
+      // Obtener la hora actual y calcular la hora tope (2 horas en el futuro)
+      const now = new Date();
+      const endTime = new Date(now.getTime() + 2 * 60 * 60 * 1000); // 2 horas después
+
+      // Guardar la hora tope en el almacenamiento persistente
+      await Preferences.set({
+        key: 'endTime',
+        value: endTime.getTime().toString(),
+      });
+
+      // Iniciar el temporizador
+      this.startCounter();
       // Obtener la hora actual y formatearla como "HH:MM"
       const horaActual = new Date();
       const horas = horaActual.getHours().toString().padStart(2, '0');
@@ -333,6 +448,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
               key: 'asistencia',
               value: JSON.stringify(asistenciaResponse),
             });
+            this.toast('Turno Iniciado')
           },
           (error) => {
             console.error('Error al realizar la solicitud POST:', error);
@@ -351,23 +467,16 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async permanencia() {
-    const taskId = await BackgroundTask.beforeExit(async () => {
-      await Preferences.set({
-        key: 'tiempoRestante',
-        value: this.tiempoRestante.toString(),
-      });
-
-      BackgroundTask.finish({ taskId });
-    });
-  }
-
-  formatTime(seconds: number): string {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const remainingSeconds = seconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes
-      .toString()
-      .padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    // Detener el temporizador de finalización automática
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+    }
+    // Restablecer el temporizador y desactivar el botón de permanencia
+    this.tiempoRestante = 2 * 60 * 60;
+    this.botonPermanenciaHabilitado = false;
+    // Reiniciar el contador
+    this.startCounter();
+    this.cd.detectChanges();
   }
 
   goToDash() {
@@ -376,60 +485,16 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     }, 3000);
   }
 
-  registrarAsistencia() {
-    if (this.asistencia.length > 0) {
-      const rut = this.asistencia[0].rut;
-      const clase = this.asistencia[0].id_clase;
-      const fecha = this.asistencia[0].fecha;
-      const estado = 'Presente';
-
-      const body = {
-        rut_alumno: `https://osolices.pythonanywhere.com/alumnos/${rut}/`,
-        id_clase: `https://osolices.pythonanywhere.com/clases/${clase}/`,
-        fecha: fecha,
-        estado: estado,
-      };
-
-      console.log(body);
-
-      this.http
-        .post('https://osolices.pythonanywhere.com/asistencias/', body)
-        .subscribe(
-          (response) => {
-            console.log(response);
-            this.presente('¡Estás Presente!');
-          },
-          (error) => {
-            console.error(error);
-            this.presente('Ya estás presente');
-          }
-        );
-    } else {
-      console.log('El array asistencia está vacío');
-    }
-  }
-
-  presente(mensaje: string) {
+  toast(mensaje: string) {
     const toast = document.createElement('ion-toast');
     toast.message = mensaje;
     toast.duration = 2000;
-
+    toast.cssClass = 'my-toast'; // Añade esta línea
+  
     document.body.appendChild(toast);
     return toast.present();
   }
 
-  datosUsuario() {
-    const userData = window.localStorage.getItem('userData');
-    if (userData) {
-      this.usuario.rut = JSON.parse(userData).rut_alumno;
-      this.usuario.nombre = JSON.parse(userData).nombre;
-      this.usuario.apellido = JSON.parse(userData).apellido;
-    }
-  }
-
-  finalizar() {
-    this.router.navigate(['/dashboard-alumno']);
-  }
 
   async iniciarSeguimientoUbicacionGuardia() {
     this.ubicacionGuardiaTask = setInterval(async () => {
@@ -475,6 +540,22 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  async confirmarFinalizarTurno() {
+    const result = await Swal.fire({
+      title: 'Confirmación',
+      text: '¿Estás seguro de que quieres finalizar el turno?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, finalizar',
+      cancelButtonText: 'No, cancelar',
+      heightAuto: false,
+      confirmButtonColor: 'rgb(57, 88, 134)',
+    });
+  
+    if (result.isConfirmed) {
+      await this.finalizarTurno();
+    }
+  }
   async finalizarTurno() {
     interface AsistenciaResponse {
       id_asistencia: number;
@@ -496,38 +577,57 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
       const minutos = horaActual.getMinutes().toString().padStart(2, '0');
       const horaFormateada = `${horas}:${minutos}`;
       asistencia.hora_fin_2 = horaFormateada;
-
+      this.botonIncidenciaHabilitado = false;
+      this.cd.detectChanges();
       this.http
-      .put(
-        `https://osolices.pythonanywhere.com/asistencia/${asistencia.id_asistencia}/`,
-        asistencia
-      )
-      .subscribe(
-        async (response: any) => { // Agrega 'async' aquí
-          const updatedAsistencia = response as AsistenciaResponse;
-          console.log('Respuesta de la API:', updatedAsistencia);
-          if (this.ubicacionGuardiaTask) {
-            // Detener la tarea de seguimiento de ubicación del guardia al finalizar el turno
-            clearInterval(this.ubicacionGuardiaTask);
-            console.log('Tarea de seguimiento de ubicación del guardia detenida.');
+        .put(
+          `https://osolices.pythonanywhere.com/asistencia/${asistencia.id_asistencia}/`,
+          asistencia
+        )
+        .subscribe(
+          async (response: any) => {
+            // Agrega 'async' aquí
+            const updatedAsistencia = response as AsistenciaResponse;
+            console.log('Respuesta de la API:', updatedAsistencia);
+            if (this.ubicacionGuardiaTask) {
+              // Detener la tarea de seguimiento de ubicación del guardia al finalizar el turno
+              clearInterval(this.ubicacionGuardiaTask);
+              console.log(
+                'Tarea de seguimiento de ubicación del guardia detenida.'
+              );
+            }
+            this.stopCounter();
+            this.toast('Turno Finalizado')
+            // Eliminar todos los datos de Preferences
+            await Preferences.clear(); // Ahora puedes usar 'await' aquí
+            console.log('Todos los datos de Preferences han sido eliminados.');
+            this.cd.detectChanges();
+          },
+          (error) => {
+            console.error('Error al realizar la solicitud PUT:', error);
           }
-          this.stopCounter();
-      
-          // Eliminar todos los datos de Preferences
-          await Preferences.clear(); // Ahora puedes usar 'await' aquí
-          console.log('Todos los datos de Preferences han sido eliminados.');
-          this.cd.detectChanges();
-        },
-        (error) => {
-          console.error('Error al realizar la solicitud PUT:', error);
-        }
-      );
+        );
     } else {
       console.error('No se encontró la asistencia en el almacenamiento local');
     }
-    
   }
 
+  async confirmarIniColacion() {
+    const result = await Swal.fire({
+      title: 'Confirmación',
+      text: '¿Estás seguro de que quieres iniciar tú colación?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, iniciar',
+      cancelButtonText: 'No, cancelar',
+      heightAuto: false,
+      confirmButtonColor: 'rgb(57, 88, 134)',
+    });
+  
+    if (result.isConfirmed) {
+      await this.marcarInicioColacion();
+    }
+  }
   async marcarInicioColacion() {
     interface AsistenciaResponse {
       id_asistencia: number;
@@ -559,7 +659,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
           (response: any) => {
             const updatedAsistencia = response as AsistenciaResponse;
             console.log('Respuesta de la API:', updatedAsistencia);
-
+            this.toast('Colación Iniciada')
             // Guardar la asistencia actualizada en el almacenamiento local
             Preferences.set({
               key: 'asistencia',
@@ -586,9 +686,9 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
               key: 'botonColacionHabilitado',
               value: 'false',
             });
-      
+
             this.botonColacionHabilitado = false;
-            this.botonFinColacionHabilitado =true;
+            this.botonFinColacionHabilitado = true;
             this.cd.detectChanges();
           },
           (error) => {
@@ -599,7 +699,22 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
       console.error('No se encontró la asistencia en el almacenamiento local');
     }
   }
-
+  async confirmarFinColacion() {
+    const result = await Swal.fire({
+      title: 'Confirmación',
+      text: '¿Estás seguro de que quieres finalizar tú colación?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, finalizar',
+      cancelButtonText: 'No, cancelar',
+      heightAuto: false,
+      confirmButtonColor: 'rgb(57, 88, 134)',
+    });
+  
+    if (result.isConfirmed) {
+      await this.marcarFinColacion();
+    }
+  }
   async marcarFinColacion() {
     interface AsistenciaResponse {
       id_asistencia: number;
@@ -631,14 +746,14 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
           (response: any) => {
             const updatedAsistencia = response as AsistenciaResponse;
             console.log('Respuesta de la API:', updatedAsistencia);
-
+            this.toast('Colación Finalizada')
             // Guardar la asistencia actualizada en el almacenamiento local
             Preferences.set({
               key: 'asistencia',
               value: JSON.stringify(updatedAsistencia),
             });
 
-            this.botonFinColacionHabilitado =false;
+            this.botonFinColacionHabilitado = false;
             this.cd.detectChanges();
           },
           (error) => {
@@ -649,4 +764,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
       console.error('No se encontró la asistencia en el almacenamiento local');
     }
   }
+
+
+
 }

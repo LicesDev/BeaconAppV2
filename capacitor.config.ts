@@ -7,7 +7,12 @@ const config: CapacitorConfig = {
   plugins: {
     BackgroundTask: {
       // Aquí puedes agregar configuraciones específicas del plugin si es necesario
-    }
+    },
+    LocalNotifications: {
+      smallIcon: "ic_stat_icon_config_sample",
+      iconColor: "#488AFF",
+      sound: "beep.wav",
+    },
   }
 };
 
