@@ -1,46 +1,42 @@
 .fondo{
-    --background: rgb(11,72,113);
-    --background: radial-gradient(circle, rgba(11,72,113,1) 65%, rgba(248,179,28,1) 100%);
+  --background: rgb(78, 118, 169);
 }
-.logo{
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.logo {
   display: flex;
-  align-items: center;
   justify-content: center;
- 
-}
-.logo1{
-    width: 18em;
-    height: 18em;
-    
-}
-.slogan{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-   
+  align-items: center;
+  height: 100vh; // Ajusta esto según tus necesidades
+  .logo1 {
+    position: relative;
+    img {
+      display: block;
+      width: 50vw; // Ajusta el tamaño de tu logo aquí
+    }
   }
-  .slogan1{
-      width: 20em;
-      height: 20em;
-      
+  &:before {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    width: 65vw; // Ajusta el tamaño del spinner aquí
+    height: 65vw; // Ajusta el tamaño del spinner aquí
+    border: 30px solid transparent; // Ajusta el grosor del spinner aquí
+    border-top-color: #e9edf5da;
+    border-right-color: #e9edf5a9;
+    border-bottom-color: #e9edf56b;
+    border-left-color: #e9edf517;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    background-size: 200% 100%;
+    background-position: right bottom;
   }
-.spinner{
-    margin-left: 8em;
-    
-}
-ion-spinner {
-    width: 50px;
-    height: 50px;
-  }
-.duoc{
-    margin-top: -5em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-   
-  }
-.duoc1{
-    width: 10em;
-    height: 10em;
-    
 }

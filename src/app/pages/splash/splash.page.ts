@@ -10,24 +10,23 @@ import { Preferences } from '@capacitor/preferences';
   styleUrls: ['./splash.page.scss'],
 })
 export class SplashPage implements OnInit {
-  @ViewChild('duoc') duoc!: ElementRef;
+  @ViewChild('logo') logo!: ElementRef;
   constructor(private router: Router,
               private aniCtrl: AnimationController) { }
   ngAfterViewInit(): void{
     const animacion = this.aniCtrl.create()
-    .addElement(this.duoc.nativeElement)
+    .addElement(this.logo.nativeElement)
     .duration(3000)
-    .fromTo('transform', 'translateY(100px)', 'translateY(0px)')
+    .fromTo('transform', 'translateY(100px) scale(0)', 'translateY(0px) scale(1)')
     .fromTo('opacity', '0', '1');
     animacion.play()
-    setTimeout(() => {
-      this.router.navigate(['/login'])
-    }, 6000*36*5);
-    Preferences.clear(); 
   }    
 
   ngOnInit() {
-
+    setTimeout(() => {
+      this.router.navigate(['/login'])
+    }, 6000);
+    Preferences.clear(); 
   }
   
 
