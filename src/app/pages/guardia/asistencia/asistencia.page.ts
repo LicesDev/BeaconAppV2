@@ -15,7 +15,10 @@ import {
 import { ChangeDetectorRef } from '@angular/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import Swal from 'sweetalert2';
-
+import { EmailComposer, OpenOptions } from 'capacitor-email-composer';
+import { ModalController } from '@ionic/angular';
+import { ViewChild } from '@angular/core';
+import { IonSelect, IonTextarea } from '@ionic/angular';
 
 @Component({
   selector: 'app-asistencia',
@@ -39,18 +42,26 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
   ubicacionGuardiaTask: any;
   ubicacionGuardiaTaskInterval = 10 * 60 * 1000;
   tiempoRestante = 2 * 60 * 60;
+  incidencias: any[] = [];
+  tipoIncidencia?: string;
+  descripcion?: string;
+  evidencia?: File;
+  @ViewChild('tipoIncidenciaSelect') tipoIncidenciaSelect!: IonSelect;
+  @ViewChild('descripcionTextarea') descripcionTextarea!: IonTextarea;
 
   constructor(
     private router: Router,
     private http: HttpClient,
     private route: ActivatedRoute,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private modalController: ModalController
   ) {}
 
   async ngOnInit() {
     this.route.queryParams.subscribe((params) => {
       this.asignacion = params;
     });
+    await Preferences.set({ key: 'turnoIniciado', value: 'false' });
     await this.obtenerUbicacionGuardia();
 
     // Recuperar el estado del contador del almacenamiento local solo cuando se inicializa el componente
@@ -60,6 +71,9 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     // Configurar el listener de estado de la aplicación
     App.addListener('appStateChange', async ({ isActive }) => {
       if (isActive) {
+        const { value: botonBuscarVisible } = await Preferences.get({
+          key: 'botonBuscarVisible',
+        });
         // Recuperar el estado de los botones del almacenamiento local
         const { value: botonComenzarVisible } = await Preferences.get({
           key: 'botonComenzarVisible',
@@ -67,11 +81,14 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
         const { value: botonFinalizarVisible } = await Preferences.get({
           key: 'botonFinalizarVisible',
         });
+        let buscar = document.getElementById('buscando');
         let comenzar = document.getElementById('asistencia');
         let finalizar = document.getElementById('finalizar');
+        if (buscar) {
+          buscar.style.display = botonBuscarVisible === 'none' ? 'none' : '';
+        }
         if (comenzar) {
-          comenzar.style.display =
-            botonComenzarVisible === 'none' ? 'none' : '';
+          comenzar.style.display = botonComenzarVisible === '' ? '' : 'none';
         }
         if (finalizar) {
           finalizar.style.display = botonFinalizarVisible === '' ? '' : 'none';
@@ -113,8 +130,11 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async ngAfterViewInit() {
-
     this.detectDevice();
+    // Recuperar el estado de los botones del almacenamiento local
+    const { value: botonBuscarVisible } = await Preferences.get({
+      key: 'botonBuscarVisible',
+    });
     // Recuperar el estado de los botones del almacenamiento local
     const { value: botonComenzarVisible } = await Preferences.get({
       key: 'botonComenzarVisible',
@@ -122,10 +142,14 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     const { value: botonFinalizarVisible } = await Preferences.get({
       key: 'botonFinalizarVisible',
     });
+    let buscar = document.getElementById('buscando');
     let comenzar = document.getElementById('asistencia');
     let finalizar = document.getElementById('finalizar');
+    if (buscar) {
+      buscar.style.display = botonBuscarVisible === 'none' ? 'none' : '';
+    }
     if (comenzar) {
-      comenzar.style.display = botonComenzarVisible === 'none' ? 'none' : '';
+      comenzar.style.display = botonComenzarVisible === '' ? '' : 'none';
     }
     if (finalizar) {
       finalizar.style.display = botonFinalizarVisible === '' ? '' : 'none';
@@ -195,30 +219,33 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
-  
+
     this.intervalId = setInterval(async () => {
       // Calcular el tiempo restante
       this.tiempoRestante = await this.getRemainingTime();
-  
+
       if (this.tiempoRestante > 0) {
         this.tiempoRestante--;
-  
+
         // Guardar el estado del contador en el almacenamiento local cada segundo
         await Preferences.set({
           key: 'tiempoRestante',
           value: this.tiempoRestante.toString(),
         });
-  
+
         this.cd.detectChanges(); // Detectar los cambios
       } else {
         clearInterval(this.intervalId);
         this.botonPermanenciaHabilitado = true;
-        this.cd.detectChanges(); 
+        this.cd.detectChanges();
         this.alertaPermanencia();
 
         // Iniciar un temporizador para ejecutar automáticamente finalizarTurno() después de 5 minutos
         this.timeoutId = setTimeout(() => {
-          this.alerta('Turno Finalizado','Se finalizo el turno por no marcación');
+          this.alerta(
+            'Turno Finalizado',
+            'Se finalizo el turno por no marcación'
+          );
           this.finalizarTurno();
         }, 5 * 60 * 1000);
       }
@@ -240,10 +267,10 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
       return 2 * 60 * 60; // 2 horas en segundos
     }
   }
-  alerta(mensaje:string, cuerpo:string){
+  alerta(mensaje: string, cuerpo: string) {
     const notificationId = Math.floor(Math.random() * 1000000);
     const now = new Date(); // Crear un nuevo objeto Date con la hora actual
-  
+
     LocalNotifications.schedule({
       notifications: [
         {
@@ -259,7 +286,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     // Programar una notificación para dentro de 2 horas
     const notificationId = Math.floor(Math.random() * 1000000);
     const twoHoursFromNow = new Date(new Date().getTime() + 2 * 60 * 60 * 1000); // 2 horas después
-  
+
     LocalNotifications.schedule({
       notifications: [
         {
@@ -271,7 +298,6 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
       ],
     });
   }
-  
 
   formatTime(seconds: number): string {
     const hours = Math.floor(seconds / 3600);
@@ -288,47 +314,67 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async detectDevice() {
-  try {
-    console.log('INICIALIZANDO BLUETOOTH');
-    await BleClient.initialize();
+    try {
+      console.log('INICIALIZANDO BLUETOOTH');
+      await BleClient.initialize();
 
-    console.log('VERIFICANDO ESTADO DEL BLUETOOTH');
-    const isEnabled = await BleClient.isEnabled();
-    if (!isEnabled) {
-      console.log('BLUETOOTH NO ESTÁ ACTIVADO');
-      if (BleClient.requestEnable) {
-        await BleClient.requestEnable();
-      }
-      return;
-    }
-
-    console.log('ESCANEANDO');
-    const targetDeviceName = 'Sede Test';
-    let deviceFound = false;
-
-    while (!deviceFound) {
-      await BleClient.requestLEScan(
-        { name: targetDeviceName },
-        (scanResult) => {
-          if (scanResult.device && scanResult.device.name === targetDeviceName) {
-            console.log('BALIZA OBJETIVO ENCONTRADA:', scanResult.device);
-            this.botonTurnoHabilitado = true;
-            deviceFound = true;
-          }
+      console.log('VERIFICANDO ESTADO DEL BLUETOOTH');
+      const isEnabled = await BleClient.isEnabled();
+      if (!isEnabled) {
+        console.log('BLUETOOTH NO ESTÁ ACTIVADO');
+        if (BleClient.requestEnable) {
+          await BleClient.requestEnable();
         }
-      );
-
-      await new Promise(resolve => setTimeout(resolve, 5000));
-      if (!deviceFound) {
-        console.log('Dispositivo no encontrado, reintentando...');
-        BleClient.stopLEScan();
+        return;
       }
-    }
-  } catch (error) {
-    console.error('Error al inicializar el Bluetooth:', error);
-  }
-}
 
+      console.log('ESCANEANDO');
+      const targetDeviceName = 'Sede Test';
+      let deviceFound = false;
+
+      while (!deviceFound) {
+        await BleClient.requestLEScan(
+          { name: targetDeviceName },
+          (scanResult) => {
+            if (
+              scanResult.device &&
+              scanResult.device.name === targetDeviceName
+            ) {
+              console.log('BALIZA OBJETIVO ENCONTRADA:', scanResult.device);
+
+              this.botonTurnoHabilitado = true;
+              deviceFound = true;
+              let buscar = document.getElementById('buscando');
+              if (buscar) {
+                buscar.style.display = 'none';
+                Preferences.set({
+                  key: 'botonBuscarVisible',
+                  value: 'none',
+                });
+              }
+              let comenzar = document.getElementById('asistencia');
+              if (comenzar) {
+                comenzar.style.display = '';
+                Preferences.set({
+                  key: 'botonComenzarVisible',
+                  value: '',
+                });
+                this.cd.detectChanges();
+              }
+            }
+          }
+        );
+
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        if (!deviceFound) {
+          console.log('Dispositivo no encontrado, reintentando...');
+          BleClient.stopLEScan();
+        }
+      }
+    } catch (error) {
+      console.error('Error al inicializar el Bluetooth:', error);
+    }
+  }
 
   async confirmarComenzarTurno() {
     const result = await Swal.fire({
@@ -341,7 +387,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
       heightAuto: false,
       confirmButtonColor: 'rgb(57, 88, 134)',
     });
-  
+
     if (result.isConfirmed) {
       await this.comenzarTurno();
     }
@@ -402,7 +448,8 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
         key: 'endTime',
         value: endTime.getTime().toString(),
       });
-
+      await Preferences.set({ key: 'turnoIniciado', value: 'true' });
+      this.iniciarSeguimientoUbicacionGuardia();
       // Iniciar el temporizador
       this.startCounter();
       // Obtener la hora actual y formatearla como "HH:MM"
@@ -448,7 +495,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
               key: 'asistencia',
               value: JSON.stringify(asistenciaResponse),
             });
-            this.toast('Turno Iniciado')
+            this.toast('Turno Iniciado');
           },
           (error) => {
             console.error('Error al realizar la solicitud POST:', error);
@@ -490,11 +537,10 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     toast.message = mensaje;
     toast.duration = 2000;
     toast.cssClass = 'my-toast'; // Añade esta línea
-  
+
     document.body.appendChild(toast);
     return toast.present();
   }
-
 
   async iniciarSeguimientoUbicacionGuardia() {
     this.ubicacionGuardiaTask = setInterval(async () => {
@@ -503,10 +549,9 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
         const coordinates = await Geolocation.getCurrentPosition();
         const latitud = coordinates.coords.latitude;
         const longitud = coordinates.coords.longitude;
-        const timestamp = coordinates.timestamp;
 
         // Enviar la ubicación del guardia al servidor
-        await this.enviarUbicacionGuardia(latitud, longitud, timestamp);
+        await this.enviarUbicacionGuardia(latitud, longitud);
       } catch (error) {
         console.error(
           'Error en el seguimiento de ubicación del guardia:',
@@ -519,22 +564,67 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     await this.ubicacionGuardiaTask();
   }
 
-  async enviarUbicacionGuardia(
-    latitud: number,
-    longitud: number,
-    timestamp: number
-  ) {
+  async enviarUbicacionGuardia(latitud: number, longitud: number) {
     try {
-      const body = {
-        latitud: latitud,
-        longitud: longitud,
-        timestamp: timestamp,
-      };
+      let body: any; // Declara 'body' aquí
 
-      await this.http
-        .post('https://osolices.pythonanywhere.com/ubicacion_guardia/', body)
-        .toPromise();
-      console.log('Ubicación del guardia enviada:', latitud, longitud);
+      interface AsistenciaResponse {
+        id_asistencia: number;
+        hora_ini_1: string;
+        hora_fin_1: string | null;
+        hora_ini_2: string | null;
+        hora_fin_2: string | null;
+        remuneracion_final: number | null;
+        id_descuento: number;
+        id_asignacion: number;
+      }
+      const { value } = await Preferences.get({ key: 'asistencia' });
+      const turnoIniciado = await Preferences.get({ key: 'turnoIniciado' });
+      if (value !== null) {
+        const asistencia = JSON.parse(value) as AsistenciaResponse;
+        const userData = window.localStorage.getItem('userData');
+        if (userData) {
+          const rut = JSON.parse(userData).rut_guarida;
+          body = {
+            rut_guarida: rut,
+            id_turno: asistencia.id_asignacion.toString(),
+            latitud: latitud,
+            longitud: longitud,
+          };
+        }
+
+        if (turnoIniciado.value === 'false') {
+          this.http
+            .post('https://osolices.pythonanywhere.com/ubicacionguardia/', body)
+            .subscribe((response: any) => {
+              Preferences.set({
+                key: 'id_ubicacion',
+                value: response.id_ubicacion.toString(),
+              });
+              console.log('Respuesta:', response.id_ubicacion.toString());
+            });
+
+          console.log(
+            'Ubicación del guardia enviada (POST):',
+            latitud,
+            longitud
+          );
+          await Preferences.set({ key: 'turnoIniciado', value: 'true' });
+        } else if (turnoIniciado.value === 'true') {
+          body.id_ubicacion = await Preferences.get({ key: 'id_ubicacion' });
+          await this.http
+            .put(
+              `https://osolices.pythonanywhere.com/ubicacionguardia/${body.id_ubicacion}/`,
+              body
+            )
+            .toPromise();
+          console.log(
+            'Ubicación del guardia enviada (PUT):',
+            latitud,
+            longitud
+          );
+        }
+      }
     } catch (error) {
       console.error('Error al enviar la ubicación del guardia:', error);
     }
@@ -551,7 +641,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
       heightAuto: false,
       confirmButtonColor: 'rgb(57, 88, 134)',
     });
-  
+
     if (result.isConfirmed) {
       await this.finalizarTurno();
     }
@@ -597,9 +687,9 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
               );
             }
             this.stopCounter();
-            this.toast('Turno Finalizado')
+            this.toast('Turno Finalizado');
             // Eliminar todos los datos de Preferences
-            await Preferences.clear(); // Ahora puedes usar 'await' aquí
+            await Preferences.clear(); 
             console.log('Todos los datos de Preferences han sido eliminados.');
             this.cd.detectChanges();
           },
@@ -623,7 +713,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
       heightAuto: false,
       confirmButtonColor: 'rgb(57, 88, 134)',
     });
-  
+
     if (result.isConfirmed) {
       await this.marcarInicioColacion();
     }
@@ -659,7 +749,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
           (response: any) => {
             const updatedAsistencia = response as AsistenciaResponse;
             console.log('Respuesta de la API:', updatedAsistencia);
-            this.toast('Colación Iniciada')
+            this.toast('Colación Iniciada');
             // Guardar la asistencia actualizada en el almacenamiento local
             Preferences.set({
               key: 'asistencia',
@@ -710,7 +800,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
       heightAuto: false,
       confirmButtonColor: 'rgb(57, 88, 134)',
     });
-  
+
     if (result.isConfirmed) {
       await this.marcarFinColacion();
     }
@@ -746,7 +836,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
           (response: any) => {
             const updatedAsistencia = response as AsistenciaResponse;
             console.log('Respuesta de la API:', updatedAsistencia);
-            this.toast('Colación Finalizada')
+            this.toast('Colación Finalizada');
             // Guardar la asistencia actualizada en el almacenamiento local
             Preferences.set({
               key: 'asistencia',
@@ -765,6 +855,72 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  crearIncidencias() {
+    this.http
+      .get(`https://osolices.pythonanywhere.com/tipoincidencia/`)
+      .subscribe((data: any) => {
+        this.incidencias = data;
+        console.log(this.incidencias);
+      });
+  }
 
+  async enviarIncidencia() {
+    const tipoIncidencia = this.tipoIncidenciaSelect.value;
+    const descripcion = this.descripcionTextarea.value;
 
+    console.log(tipoIncidencia);
+    console.log(descripcion);
+
+    if (tipoIncidencia && descripcion) {
+      let body: any; // Declara 'body' aquí
+
+      interface AsistenciaResponse {
+        id_asistencia: number;
+        hora_ini_1: string;
+        hora_fin_1: string | null;
+        hora_ini_2: string | null;
+        hora_fin_2: string | null;
+        remuneracion_final: number | null;
+        id_descuento: number;
+        id_asignacion: number;
+      }
+      const { value } = await Preferences.get({ key: 'asistencia' });
+      if (value !== null) {
+        const asistencia = JSON.parse(value) as AsistenciaResponse;
+        body = {
+          // Asigna un valor a 'body' aquí
+          detalle_incidencia: descripcion,
+          id_tipo_incidencia: tipoIncidencia,
+          id_asignacion: asistencia.id_asignacion.toString(),
+        };
+      }
+
+      // Ahora puedes usar 'body' aquí
+      this.http
+        .post('https://osolices.pythonanywhere.com/incidencia/', body)
+        .subscribe(
+          (response) => {
+            const email: OpenOptions = {
+              to: ['danilosantelices@gmail.com'],
+              subject: 'Reporte de incidencia',
+              body: `Se ha reportado una incidencia de tipo ${tipoIncidencia} con la siguiente descripción: ${descripcion}. Adjunto imagen o video de evidencia:`,
+              isHtml: true,
+            };
+            EmailComposer.open(email)
+              .then(() => {
+                console.log('Correo enviado exitosamente');
+                this.modalController.dismiss();
+              })
+              .catch((error) => {
+                console.error('Error enviando el correo:', error);
+              });
+          },
+          (error) => {
+            console.error('Error subiendo los datos:', error);
+          }
+        );
+    } else {
+      console.error('Faltan datos para enviar la incidencia');
+    }
+  }
 }

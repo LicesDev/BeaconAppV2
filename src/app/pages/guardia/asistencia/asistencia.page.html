@@ -32,8 +32,11 @@
 
   
   <div class="boton">
-    <button class="botonasistencia" id="asistencia" style="display:'' " [disabled]="!botonTurnoHabilitado" [ngClass]="{'disabled': !botonTurnoHabilitado}" (click)="confirmarComenzarTurno()">Comenzar turno</button>
+    <button class="botonasistencia" id="asistencia" style="display: none;" [disabled]="!botonTurnoHabilitado" [ngClass]="{'disabled': !botonTurnoHabilitado}" (click)="confirmarComenzarTurno()">Comenzar turno</button>
     <button class="botonfinalizar" id="finalizar" style="display: none;" (click)="confirmarFinalizarTurno()">Finalizar turno</button>
+    <button class="botonasistencia" id="buscando" style="display:'' " >Buscando Baliza <br> <ion-spinner class="spinner" name="lines-sharp"></ion-spinner></button>
+
+
   </div>
   <div class="boton">
     <button class="botonmarcar" id="ini_colacion" style="display:'' " [disabled]="!botonColacionHabilitado" [ngClass]="{'disabled': !botonColacionHabilitado}" (click)="confirmarIniColacion()">Colación</button>
@@ -43,6 +46,33 @@
     </button>
   </div>
   <div class="boton">
-    <button class="botonasistencia" id="asistencia" [disabled]="!botonIncidenciaHabilitado" [ngClass]="{'disabled': !botonIncidenciaHabilitado}" (click)="detectDevice()">Reportar Incidencia</button>
+    <button class="botonasistencia" id="incidencia"  (click)="crearIncidencias()">Reportar Incidencia</button>
   </div>
+
+  <ion-modal #modal trigger="incidencia">
+    <ng-template>
+      <ion-content>
+        <ion-toolbar>
+          <ion-title>Reportar Incidencia</ion-title>
+    
+        </ion-toolbar>
+        <ion-list>
+          <ion-item>
+            <ion-select #tipoIncidenciaSelect label="Tipo de Incidencia" placeholder="">
+              <ion-select-option *ngFor="let incidencia of incidencias; let i = index" lines="none" detail="false" value="{{incidencia.id_tipo_incidencia}}">{{incidencia.descripcion}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-textarea #descripcionTextarea label="Descripción" labelPlacement="stacked"  placeholder="Describa detalladamente la incidencia"></ion-textarea>
+          </ion-item>
+                    <ion-buttons class="btns">
+            <ion-button class="btncancelar" (click)="modal.dismiss()" >Cancelar</ion-button>
+            <ion-button class="btnenviar" (click)="enviarIncidencia()" [strong]="true">Enviar</ion-button>
+          </ion-buttons>
+
+
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>

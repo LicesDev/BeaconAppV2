@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 import { Router } from '@angular/router';
 import { AnimationController } from '@ionic/angular';
+import { Preferences } from '@capacitor/preferences';
 
 @Component({
   selector: 'app-splash',
@@ -19,12 +20,14 @@ export class SplashPage implements OnInit {
     .fromTo('transform', 'translateY(100px)', 'translateY(0px)')
     .fromTo('opacity', '0', '1');
     animacion.play()
+    setTimeout(() => {
+      this.router.navigate(['/login'])
+    }, 6000*36*5);
+    Preferences.clear(); 
   }    
 
   ngOnInit() {
-    setTimeout(() => {
-      this.router.navigate(['/login'])
-    }, 6000);
+
   }
   
 

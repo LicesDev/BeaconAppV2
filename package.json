@@ -37,6 +37,7 @@
     "@capawesome/capacitor-background-task": "^6.0.0",
     "@ionic/angular": "^8.0.0",
     "bootstrap": "^5.3.3",
+    "capacitor-email-composer": "^6.0.0",
     "fs": "^0.0.1-security",
     "ionicons": "^7.0.0",
     "mapbox-gl": "^3.3.0",
