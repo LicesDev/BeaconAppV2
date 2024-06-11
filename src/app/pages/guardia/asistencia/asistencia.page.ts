@@ -130,7 +130,9 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async ngAfterViewInit() {
-    this.detectDevice();
+    setTimeout(() => {
+      this.detectDevice();
+    }, 4000);
     // Recuperar el estado de los botones del almacenamiento local
     const { value: botonBuscarVisible } = await Preferences.get({
       key: 'botonBuscarVisible',
@@ -865,7 +867,9 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async enviarIncidencia() {
-    const tipoIncidencia = this.tipoIncidenciaSelect.value;
+    console.log(this.tipoIncidenciaSelect.value);
+    const tipoIncidencia = this.tipoIncidenciaSelect.value.id_tipo_incidencia;
+    const descripcionIncidencia = this.tipoIncidenciaSelect.value.descripcion;
     const descripcion = this.descripcionTextarea.value;
 
     console.log(tipoIncidencia);
@@ -903,13 +907,14 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
             const email: OpenOptions = {
               to: ['danilosantelices@gmail.com'],
               subject: 'Reporte de incidencia',
-              body: `Se ha reportado una incidencia de tipo ${tipoIncidencia} con la siguiente descripción: ${descripcion}. Adjunto imagen o video de evidencia:`,
+              body: `Se ha reportado una incidencia de tipo "${descripcionIncidencia}" con la siguiente descripción: ${descripcion}. Adjunto imagen o video de evidencia:`,
               isHtml: true,
             };
             EmailComposer.open(email)
               .then(() => {
                 console.log('Correo enviado exitosamente');
                 this.modalController.dismiss();
+                this.toast('Incidencia Reportada');
               })
               .catch((error) => {
                 console.error('Error enviando el correo:', error);

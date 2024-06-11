@@ -7,9 +7,9 @@ import { Http } from '@capacitor-community/http';
 
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { Geolocation, PermissionStatus } from '@capacitor/geolocation';
+import { Geolocation } from '@capacitor/geolocation';
 import { LocalNotifications } from '@capacitor/local-notifications';
-import { BluetoothLe, RequestBleDeviceOptions } from '@capacitor-community/bluetooth-le';
+
 
 
 @Component({

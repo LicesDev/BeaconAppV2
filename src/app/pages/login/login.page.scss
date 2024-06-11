@@ -2,7 +2,13 @@
     --background: rgb(57,88,134);
     --background: linear-gradient(90deg, rgba(57,88,134,1) 0%, rgba(99,142,203,1) 10%, rgba(138,174,224,1) 20%,rgba(177,201,239,1) 30%, rgba(213,222,239,1) 40%,   rgba(213,222,239,1) 60%, rgba(177,201,239,1) 70%, rgba(138,174,224,1) 80%, rgba(99,142,203,1) 90%, rgba(57,88,134,1) 100%);
 }
+.contenedor{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
 .imagen-header{
+    height: 20%;
     margin-top: 2rem;
     display: flex;
     align-items: center;
@@ -15,10 +21,10 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    position: fixed;
     bottom: 0;
     filter: drop-shadow(0 1 0.3rem rgb(0, 0, 0));
 }
+
 .logo{
     width: 50%;
 }
@@ -28,6 +34,7 @@
 .for{
     font-weight: 700;
     margin-bottom: 0% !important;
+    color: black;
 }
 ion-card {
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
@@ -39,45 +46,43 @@ ion-card-title {
 }
   
 ion-button {
-    margin-top: 20px;
-    --background: rgb(57,88,134) !important;
-    border-radius: 20% !important;
+    --background: linear-gradient(rgb(57, 88, 134) 0%, rgb(50, 75, 114) 100%) !important;
+}
+.boton{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 40px;
+    filter: drop-shadow(0 0 0.2rem rgb(78, 118, 169));
+}
+
+.btnentrar{
+    width: 100%;
+    height: 50px;
+    color: rgb(255, 255, 255);
+    font-size: large;
+    box-shadow: inset 0 2px 0 0 hsla(0, 0%, 100%, .2), inset 0 -1px 0 0 rgba(0, 0, 0, .25), 0 2px 6px 0 rgba(0, 0, 0, .1);
 }
 p {
+    margin-top: 10px;
     text-align: center;
 }
 
 .carta{
-    width: 80%;
+    bottom: 0;
+    width: 100%;
+    height: 80%;
     margin: auto;
-
-    @media screen and (min-width: 768px) {
-        width: 70%;
-    }
-    @media screen and (min-width: 1000px) {
-        width: 40%;
-    }
+    margin-top: 30%;
+    background: #e9edf548;
 }
 
-.contenedor{
-    margin-top: 2em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 2em;
-    @media screen and (min-width: 768px) {
-        margin-top: 5em;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    @media screen and (min-width: 1000px) {
-        margin-top: 7em;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+.inputs{
+    border-bottom: 1px solid black;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
 }
+
 .correo{
     display: flex;
     align-items: center;

@@ -59,7 +59,7 @@
         <ion-list>
           <ion-item>
             <ion-select #tipoIncidenciaSelect label="Tipo de Incidencia" placeholder="">
-              <ion-select-option *ngFor="let incidencia of incidencias; let i = index" lines="none" detail="false" value="{{incidencia.id_tipo_incidencia}}">{{incidencia.descripcion}}</ion-select-option>
+              <ion-select-option *ngFor="let incidencia of incidencias; let i = index" lines="none" detail="false" [value]="incidencia">{{incidencia.descripcion}}</ion-select-option>
             </ion-select>
           </ion-item>
           <ion-item>

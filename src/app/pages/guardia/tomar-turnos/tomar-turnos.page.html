@@ -1,0 +1,61 @@
+<ion-content class="fondo">
+
+  <app-navbar ></app-navbar>
+  
+  
+  <!--Carta-->
+  <div class="contenedor">
+    <ion-list class="fondo">
+      <ng-container *ngIf="asignaciones.length; else noTurnos">
+      <ion-item *ngFor="let asignacion of asignaciones; let i = index" lines="none" detail="false">
+        <ion-card >
+
+            <div class="card-content">
+              <ion-card-header>
+                <ion-card-title>{{asignacion.nombre}}</ion-card-title>
+                <div >
+                  <img src="{{asignacion.foto}}" class="qr">
+                </div>
+              </ion-card-header>
+              <p class="seccion">Fecha: {{asignacion.fecha}}</p>
+              <p class="seccion">Dirección: {{asignacion.direccion}}</p>
+
+              <ion-card-content>
+                
+                <ion-img *ngIf="!asignacion.expanded" src="./../../../assets/img/flecha.png" class="flecha" button (click)="asignacion.expanded = !asignacion.expanded" ></ion-img>
+  
+                <div *ngIf="asignacion.expanded" >
+                  <p class="seccion">Hora inicio: {{asignacion.hora_inicio}}</p>
+                  <p class="seccion">Hora termino: {{asignacion.hora_fin}}</p>
+                  <p class="seccion">Remuneración: ${{asignacion.remuneracion}}</p>
+                  <button class="boton" (click)="confirmarTomarTurno(asignacion.id_turno)">Tomar Turno</button>
+                  <ion-img *ngIf="asignacion.expanded" src="./../../../assets/img/flecha2.png" class="flecha"  button (click)="asignacion.expanded = !asignacion.expanded" ></ion-img>
+                </div>
+  
+              </ion-card-content>
+            </div>
+
+
+        </ion-card>
+      </ion-item>
+    </ng-container>
+
+    <ng-template #noTurnos>
+      <ion-item>
+        <ion-card>
+          <ion-card-header>
+            <p style="margin: auto;">No tienes turnos el día de hoy</p>
+          </ion-card-header>
+        </ion-card>
+      </ion-item>
+    </ng-template>
+    </ion-list>
+  </div>
+  
+  </ion-content>
+  
+  
+    <!--Carta-->
+  
+  
+  

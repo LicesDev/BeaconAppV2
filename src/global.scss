@@ -81,3 +81,9 @@ ion-modal {
     --background: rgb(78, 118, 169); // Color de fondo
     --color: #ffffff; // Color del texto
   }
+  ion-button.entrar{
+    --border-radius: 5% !important;
+}
+.ion-valid.sc-ion-input-md-h {
+  --highlight-color: blue;
+}

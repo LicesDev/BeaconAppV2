@@ -32,7 +32,9 @@ export class DashPage implements OnInit {
             this.http
               .get(`https://osolices.pythonanywhere.com/turno/`)
               .subscribe((dataS: any) => {
-                const asignacionGuardia = dataS.filter((dataS: any) => dataS.id_turno === asignacion.id_turno);
+                const fechaActual = new Date().toISOString().split('T')[0];
+                console.log(fechaActual)
+                const asignacionGuardia = dataS.filter((dataS: any) => dataS.id_turno === asignacion.id_turno && dataS.fecha === fechaActual);
                 console.log('B:', asignacionGuardia)         
                 const id_turno = asignacionGuardia[0].id_turno;
                 const id_sede = asignacionGuardia[0].id_sede; 

@@ -23,6 +23,14 @@ const routes: Routes = [
     path: 'login',
     loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
   },
+  {
+    path: 'mis-turnos',
+    loadChildren: () => import('./pages/guardia/mis-turnos/mis-turnos.module').then( m => m.MisTurnosPageModule)
+  },
+  {
+    path: 'tomar-turnos',
+    loadChildren: () => import('./pages/guardia/tomar-turnos/tomar-turnos.module').then( m => m.TomarTurnosPageModule)
+  },
 ];
 
 @NgModule({

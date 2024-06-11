@@ -1,33 +1,35 @@
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <meta name="color-scheme" content="light">
 <ion-content class="fondo">
+  <div class="contenedor">
   <div class="imagen-header">
     <ion-img class="logo" src="../../../assets/img/Logo1.png" ></ion-img>
   </div>
-  <div class="contenedor">
+  
   <ion-card class="carta">
     <ion-card-header>
-      <ion-card-title>Ingresar a Beacon Security</ion-card-title>
+      <ion-card-title>Ingresar</ion-card-title>
     </ion-card-header>
 
     <ion-card-content>
-      <ion-item>
-        <ion-input label="Usuario" labelPlacement="floating" [(ngModel)]="usuario" type="text"></ion-input>
-      </ion-item>
 
-      <ion-item>
-        <ion-input label="Contraseña" labelPlacement="floating" [(ngModel)]="pass" type="password"></ion-input>
-      </ion-item>
+        <ion-input class="inputs" label="Usuario" labelPlacement="floating" [(ngModel)]="usuario" type="text"></ion-input>
 
-      <ion-button expand="full" (click)="login()">Entrar</ion-button>
+
+
+        <ion-input class="inputs" label="Contraseña" labelPlacement="floating" [(ngModel)]="pass" type="password"></ion-input>
+      <div class="boton">
+        <ion-button class="btnentrar" expand="full" (click)="login()">Entrar</ion-button>
+      </div>
+      
 
       <p><a href="#">¿Olvidaste tu contraseña?</a></p>
 
     </ion-card-content>
+    <div class="imagen-footer">
+      <p class="for">FOR</p>
+      <ion-img class="logo2" src="../../../assets/img/Logo2.png" ></ion-img>
+    </div>
   </ion-card>
-</div>
-<div class="imagen-footer">
-  <p class="for">FOR</p>
-  <ion-img class="logo2" src="../../../assets/img/Logo2.png" ></ion-img>
 </div>
 </ion-content>

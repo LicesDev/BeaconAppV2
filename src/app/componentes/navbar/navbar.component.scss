@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+@import "~bootstrap/dist/css/bootstrap.css";
+
+
+
+.navbar{
+  margin: auto;
+  background-color: #395886 !important;
+  height: 4rem;
+}
+.offcanvas.offcanvas-end[_ngcontent-ng-c570713897] {
+  width: 50% !important;
+}
+.offcanvas{
+  background-color: #628ecb !important;
+  color: #f0f3fa !important;
+  width: 55% !important;
+
+  .offcanvas-header{
+    border-bottom: 2px solid #b1c9ef !important;
+  }
+  .navbar-nav .nav-link.active{
+
+    padding: 0px !important;
+  }
+  .nav-item .icon-container {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #8aaee0;
+    margin-right: 10px;
+  }
+
+  .nav-item .icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  } 
+  .navbar-nav .nav-link:hover {
+    .icon-container {
+      background-color:#f0f3fa !important; 
+    }
+    .bx {
+      color: #b1c9ef !important;
+    }
+  }
+
+
+  .bx {
+    color: #395886 !important;
+    line-height: 0px !important;
+  }
+  i{
+    height: 0px;
+    font-size: x-large;
+  }
+  
+}
