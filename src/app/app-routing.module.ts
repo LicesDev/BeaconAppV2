@@ -31,6 +31,10 @@ const routes: Routes = [
     path: 'tomar-turnos',
     loadChildren: () => import('./pages/guardia/tomar-turnos/tomar-turnos.module').then( m => m.TomarTurnosPageModule)
   },
+  {
+    path: 'solicitudes',
+    loadChildren: () => import('./pages/guardia/solicitudes/solicitudes.module').then( m => m.SolicitudesPageModule)
+  },
 ];
 
 @NgModule({
