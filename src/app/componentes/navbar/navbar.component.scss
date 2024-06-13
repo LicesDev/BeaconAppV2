@@ -14,7 +14,7 @@
 .offcanvas{
   background-color: #628ecb !important;
   color: #f0f3fa !important;
-  width: 55% !important;
+  width: 65% !important;
 
   .offcanvas-header{
     border-bottom: 2px solid #b1c9ef !important;
@@ -22,6 +22,10 @@
   .navbar-nav .nav-link.active{
 
     padding: 0px !important;
+    margin-bottom: 20px !important;
+    background: #39588646 !important;
+    width: 500px;
+    border-radius: 1em;
   }
   .nav-item .icon-container {
     display: inline-block;
@@ -50,7 +54,7 @@
 
 
   .bx {
-    color: #395886 !important;
+    color: #395886b2 !important;
     line-height: 0px !important;
   }
   i{

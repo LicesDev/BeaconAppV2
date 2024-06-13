@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { SolicitudesPageRoutingModule } from './solicitudes-routing.module';
 
 import { SolicitudesPage } from './solicitudes.page';
+import { ModuloNavbarModule } from 'src/app/modulos/modulo-navbar/modulo-navbar.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    SolicitudesPageRoutingModule
+    SolicitudesPageRoutingModule,
+    ModuloNavbarModule
   ],
   declarations: [SolicitudesPage]
 })

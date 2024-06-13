@@ -9,11 +9,15 @@
       <ng-container *ngIf="asignaciones.length; else noTurnos">
       <ion-item *ngFor="let asignacion of asignaciones; let i = index" lines="none" detail="false" button (click)="asignacion.expanded = !asignacion.expanded" >
         <ion-card >
-          <div class="flex-container" >
-            
+      
             <div class="card-content">
               <ion-card-header>
                 <ion-card-title>{{asignacion.nombre}}</ion-card-title>
+                <div class="boton">
+                  <ion-button class="botonqr" fill="clear" (click)="navegar(asignacion)">
+                    <img src="{{asignacion.foto}}" class="qr">
+                  </ion-button>        
+              </div>
               </ion-card-header>
               <p class="seccion">Fecha: {{asignacion.fecha}}</p>
               <p class="seccion">Dirección: {{asignacion.direccion}}</p>
@@ -30,13 +34,10 @@
   
               </ion-card-content>
             </div>
-            <div class="boton">
-              <ion-button class="botonqr" fill="clear" (click)="navegar(asignacion)">
-                <img src="{{asignacion.foto}}" class="qr">
-              </ion-button>        
-          </div>
-          </div>
+
+
         </ion-card>
+       
       </ion-item>
     </ng-container>
 

@@ -35,6 +35,10 @@ const routes: Routes = [
     path: 'solicitudes',
     loadChildren: () => import('./pages/guardia/solicitudes/solicitudes.module').then( m => m.SolicitudesPageModule)
   },
+  {
+    path: 'remuneraciones',
+    loadChildren: () => import('./pages/guardia/remuneraciones/remuneraciones.module').then( m => m.RemuneracionesPageModule)
+  },
 ];
 
 @NgModule({

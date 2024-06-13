@@ -1,0 +1,67 @@
+<ion-content class="fondo">
+
+  <app-navbar ></app-navbar>
+
+  <div class="fecha">
+    <ion-datetime-button class="btnfecha" datetime="datetime"></ion-datetime-button>
+
+    <ion-modal #modal [isOpen]="showModal" (didDismiss)="onDidDismiss($event)" [keepContentsMounted]="true">
+      <ng-template>
+        <ion-datetime
+          id="datetime"
+          presentation="month-year"
+          (ionChange)="onIonChange($event)"
+          [value]="currentValue"
+        ></ion-datetime>
+        <button class="seleccionar" (click)="modal.dismiss(currentValue, 'confirm')">Seleccionar</button>
+      </ng-template>
+    </ion-modal>
+  </div>
+  
+  <!--Carta-->
+  <div class="contenedor">
+    <ion-list class="fondo">
+      <ng-container *ngIf="asignaciones.length; else noTurnos">
+      <ion-item  lines="none" detail="false" >
+        <ion-card >
+
+          <div class="card-content">
+            <ion-card-header>
+              <ion-card-title>Remuneraciones</ion-card-title>
+              <p class="seccion"> Total remuneración: ${{totalRemuneracion}}  </p>
+            </ion-card-header>
+            <div class="remuneracion"  *ngFor="let asignacion of asignaciones; let i = index">
+            <p class="seccion">Fecha: {{asignacion.fecha}}</p>
+            <ion-card-content> 
+              <p class="seccion">Hora Entrada: {{asignacion.hora_ini_1}}</p>
+              <p class="seccion">Hora Salida: {{asignacion.hora_fin_2}}</p>
+              <p class="seccion">Descuento: {{(asignacion.porc_descuento ?? 0)}} % </p>
+              <p class="seccion">Remuneracion Final: {{asignacion.remuneracion_final}} </p>
+            </ion-card-content>
+          </div>
+          </div>
+
+
+      </ion-card>
+      </ion-item>
+    </ng-container>
+
+    <ng-template #noTurnos>
+      <ion-item>
+        <ion-card>
+          <ion-card-header>
+            <p style="margin: auto;">No registras remuneraciones en este mes</p>
+          </ion-card-header>
+        </ion-card>
+      </ion-item>
+    </ng-template>
+    </ion-list>
+  </div>
+  
+  </ion-content>
+  
+  
+    <!--Carta-->
+  
+  
+  
