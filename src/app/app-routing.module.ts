@@ -39,6 +39,10 @@ const routes: Routes = [
     path: 'remuneraciones',
     loadChildren: () => import('./pages/guardia/remuneraciones/remuneraciones.module').then( m => m.RemuneracionesPageModule)
   },
+  {
+    path: 'dashadmin',
+    loadChildren: () => import('./pages/administrador/dashadmin/dashadmin.module').then( m => m.DashadminPageModule)
+  },
 ];
 
 @NgModule({
