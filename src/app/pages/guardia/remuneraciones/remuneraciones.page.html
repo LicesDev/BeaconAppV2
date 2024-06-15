@@ -28,15 +28,15 @@
           <div class="card-content">
             <ion-card-header>
               <ion-card-title>Remuneraciones</ion-card-title>
-              <p class="seccion"> Total remuneración: ${{totalRemuneracion}}  </p>
+              <p class="total"> Total remuneración: $ {{ totalRemuneracion | currency:'CLP':'':'1.0-0':'es-CL' }} </p>
             </ion-card-header>
             <div class="remuneracion"  *ngFor="let asignacion of asignaciones; let i = index">
-            <p class="seccion">Fecha: {{asignacion.fecha}}</p>
+            <p class="seccion"><span class="label">Fecha: </span> <span class="value">{{asignacion.fecha}}</span></p>
             <ion-card-content> 
-              <p class="seccion">Hora Entrada: {{asignacion.hora_ini_1}}</p>
-              <p class="seccion">Hora Salida: {{asignacion.hora_fin_2}}</p>
-              <p class="seccion">Descuento: {{(asignacion.porc_descuento ?? 0)}} % </p>
-              <p class="seccion">Remuneracion Final: {{asignacion.remuneracion_final}} </p>
+              <p class="seccion"><span class="label">Hora Entrada: </span> <span class="value">{{asignacion.hora_ini_1}}</span></p>
+              <p class="seccion"><span class="label">Hora Salida: </span> <span class="value">{{asignacion.hora_fin_2}}</span></p>
+              <p class="seccion"><span class="label">Descuento: </span> <span class="value">{{(asignacion.porc_descuento ?? 0)}} %</span></p>
+              <p class="seccion"><span class="label">Remuneracion Final: </span> <span class="value">$ {{ asignacion.remuneracion_final | currency:'CLP':'':'1.0-0':'es-CL' }}</span></p>
             </ion-card-content>
           </div>
           </div>

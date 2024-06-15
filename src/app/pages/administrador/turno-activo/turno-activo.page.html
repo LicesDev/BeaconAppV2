@@ -1,0 +1,56 @@
+<ion-header no-border class="cabecera">
+  <ion-toolbar class="cabecera">
+    <ion-buttons slot="start">
+      <ion-back-button class="back" defaultHref="/ruta-pagina-anterior" text=""></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css' rel='stylesheet' />
+
+</ion-header>
+
+<ion-content [fullscreen]="true" class="fondo">
+  <div class="logo"><img *ngIf="asignacion" [src]="asignacion?.foto" alt="Foto"></div>
+  <div class="contenedor">
+    <div class="card">
+      <ul>
+        <li>Nombre: {{asignacion?.nombre}}</li>
+        <li>Fecha: {{asignacion?.fecha}}</li>
+        <li>Hora Inicio: {{asignacion?.hora_inicio}}</li>
+        <li>Hora Fin: {{asignacion?.hora_fin}}</li>
+        <li>Dirección: {{asignacion?.direccion}}</li>
+        <li>Guardias: {{asistencias.length}}/{{asignacion?.ctd_guardias}} </li>
+      </ul>
+    </div>
+  </div>
+  <div class="contenedor">
+    <div class="card">
+      <ion-list *ngFor="let asistente of asistencias; let i = index"  [inset]="true">
+        <ion-item [button]="true" button (click)="expandedItemIndex = expandedItemIndex === i ? null : i; obtenerAsistencia(asistente.id_asignacion)">
+          <ion-avatar aria-hidden="true" slot="start">
+            <img alt="" src="../../../../assets/img/perfil/perfil.png" />
+          </ion-avatar>
+          <ion-label>{{asistente.nombre}} {{asistente.apellido}}</ion-label>
+        </ion-item>
+
+        <div *ngFor="let asis of asistencia">
+          <ion-item *ngIf="expandedItemIndex === i">
+            <ion-label>Hora de Entrada: {{asis?.hora_ini_1 ?? "Sin Marcar"}}  </ion-label>
+          </ion-item>
+          <ion-item *ngIf="expandedItemIndex === i">
+            <ion-label>Salida Colación: {{asis?.hora_fin_1 ?? "Sin Marcar"}} </ion-label>
+          </ion-item>
+          <ion-item *ngIf="expandedItemIndex === i">
+            <ion-label>Regreso Colación: {{asis?.hora_ini_2 ?? "Sin Marcar"}}  </ion-label>
+          </ion-item>
+          <ion-item *ngIf="expandedItemIndex === i">
+            <ion-label>Hora de Salida: {{asis?.hora_fin_2 ?? "Sin Marcar"}}  </ion-label>
+          </ion-item>
+        </div>
+ 
+      </ion-list>
+    </div>
+  </div>
+
+
+
+</ion-content>

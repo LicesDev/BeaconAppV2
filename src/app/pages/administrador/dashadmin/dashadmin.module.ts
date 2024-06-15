@@ -8,12 +8,15 @@ import { DashadminPageRoutingModule } from './dashadmin-routing.module';
 
 import { DashadminPage } from './dashadmin.page';
 
+import { ModuloNavbarModule } from 'src/app/modulos/modulo-navbar/modulo-navbar.module';
+
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    DashadminPageRoutingModule
+    DashadminPageRoutingModule,
+    ModuloNavbarModule
   ],
   declarations: [DashadminPage]
 })

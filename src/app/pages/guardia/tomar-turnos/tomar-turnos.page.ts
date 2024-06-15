@@ -48,24 +48,10 @@ export class TomarTurnosPage implements OnInit {
 
         this.asignaciones = [];
         for (const turno of turnos) {
-          const asignacionGuardia = turnos.filter((turno: any) => dataAs.id_turno !== turno.id_turno);
-          console.log(asignacionGuardia);
-
-          if (asignacionGuardia.length > 0) {
-            const id_turno = asignacionGuardia[0].id_turno;
-            const id_sede = asignacionGuardia[0].id_sede;
-            const fecha = asignacionGuardia[0].fecha;
-            const hora_inicio = asignacionGuardia[0].horario_inicio;
-            const hora_fin = asignacionGuardia[0].hora_fin;
-            const remuneracion = asignacionGuardia[0].remuneracion;
-
-            turno.fecha = fecha;
-            turno.hora_inicio = hora_inicio;
-            turno.hora_fin = hora_fin;
-            turno.remuneracion = remuneracion;
+          console.log(turno);
 
             const sedeData: any = await this.http.get('https://osolices.pythonanywhere.com/sede/').toPromise();
-            const sede = sedeData.filter((sedeData: any) => sedeData.id_sede === id_sede);
+            const sede = sedeData.filter((sedeData: any) => sedeData.id_sede === turno.id_sede);
 
             if (sede.length > 0) {
               const nombre = sede[0].nombre;
@@ -76,8 +62,9 @@ export class TomarTurnosPage implements OnInit {
               turno.foto = foto;
               this.asignaciones.push(turno);
             }
-          }
+          
         }
+        console.log(this.asignaciones);
         this.cd.detectChanges();
       } catch (error) {
         console.error('Error fetching data', error);

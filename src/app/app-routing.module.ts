@@ -43,6 +43,14 @@ const routes: Routes = [
     path: 'dashadmin',
     loadChildren: () => import('./pages/administrador/dashadmin/dashadmin.module').then( m => m.DashadminPageModule)
   },
+  {
+    path: 'turno-activo',
+    loadChildren: () => import('./pages/administrador/turno-activo/turno-activo.module').then( m => m.TurnoActivoPageModule)
+  },
+  {
+    path: 'gestionar-turnos',
+    loadChildren: () => import('./pages/administrador/gestionar-turnos/gestionar-turnos.module').then( m => m.GestionarTurnosPageModule)
+  },
 ];
 
 @NgModule({

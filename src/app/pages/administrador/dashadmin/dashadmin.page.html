@@ -1,13 +1,63 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>dashadmin</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="fondo">
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">dashadmin</ion-title>
-    </ion-toolbar>
-  </ion-header>
-</ion-content>
+  <app-navbar-admin ></app-navbar-admin>
+  
+  
+  <!--Carta-->
+  <div class="contenedor">
+    <ion-list class="fondo">
+      <ng-container *ngIf="asignaciones.length; else noTurnos">
+      <ion-item *ngFor="let asignacion of asignaciones; let i = index" lines="none" detail="false" button (click)="asignacion.expanded = !asignacion.expanded" >
+        <ion-card >
+      
+            <div class="card-content">
+              <ion-card-header>
+                <ion-card-title>{{asignacion.nombre}}</ion-card-title>
+                <div class="boton">
+                  <ion-button class="botonqr" fill="clear" (click)="navegar(asignacion)">
+                    <img src="{{asignacion.foto}}" class="qr">
+                  </ion-button>        
+              </div>
+              </ion-card-header>
+              <p class="seccion">Fecha: {{asignacion.fecha}}</p>
+              <p class="seccion">Dirección: {{asignacion.direccion}}</p>
+              <ion-card-content>
+  
+                <ion-img *ngIf="!asignacion.expanded" src="./../../../assets/img/flecha.png" class="flecha"></ion-img>
+  
+                <div *ngIf="asignacion.expanded" >
+                  <p class="seccion">Guardias solocitados: {{asignacion.ctd_guardias}}</p>
+                  <p class="seccion">Hora inicio: {{asignacion.horario_inicio}}</p>
+                  <p class="seccion">Hora termino: {{asignacion.hora_fin}}</p>
+                  <p class="seccion">Remuneración: ${{asignacion.remuneracion}}</p>
+                  <ion-img *ngIf="asignacion.expanded" src="./../../../assets/img/flecha2.png" class="flecha"></ion-img>
+                </div>
+  
+              </ion-card-content>
+            </div>
+
+
+        </ion-card>
+       
+      </ion-item>
+    </ng-container>
+
+    <ng-template #noTurnos>
+      <ion-item>
+        <ion-card>
+          <ion-card-header>
+            <p style="margin: auto;">No hay turnos el día de hoy</p>
+          </ion-card-header>
+        </ion-card>
+      </ion-item>
+    </ng-template>
+    </ion-list>
+  </div>
+  
+  </ion-content>
+  
+  
+    <!--Carta-->
+  
+  
+  

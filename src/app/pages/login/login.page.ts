@@ -10,8 +10,6 @@ import { throwError } from 'rxjs';
 import { Geolocation } from '@capacitor/geolocation';
 import { LocalNotifications } from '@capacitor/local-notifications';
 
-
-
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -20,8 +18,7 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 export class LoginPage implements OnInit {
   usuario: string = '';
   pass: string = '';
-  administrador: string = '';
-  guardia: string = '';
+
   constructor(
     private router: Router,
     private toastCtrl: ToastController,
@@ -33,28 +30,26 @@ export class LoginPage implements OnInit {
     this.solicitarPermisos();
   }
 
-
-  
   async solicitarPermisos() {
     // Solicitar permiso para acceder a la ubicación
     const permisoUbicacion = await Geolocation.requestPermissions();
-  
+
     if (permisoUbicacion.location === 'granted') {
       // Solicitar permiso para enviar notificaciones solo si el permiso de ubicación fue concedido
       await LocalNotifications.requestPermissions();
     }
   }
-  
+
   async login() {
     // Verificar si los campos están vacíos
     if (!this.usuario || !this.pass) {
-      this.mostrarAlerta('Campos vacíos');
+      this.toast('Campos vacíos');
       return;
     }
-  
+
     console.log(`Usuario: ${this.usuario}`);
     console.log(`Contraseña: ${this.pass}`);
-  
+
     // Autenticación con el servidor
     this.http
       .post('https://osolices.pythonanywhere.com/login/', {
@@ -62,10 +57,10 @@ export class LoginPage implements OnInit {
         contrasena: this.pass,
       })
       .pipe(
-        catchError(error => {
+        catchError((error) => {
           if (error.status === 404) {
             // Muestra la alerta de usuario incorrecto
-            this.mostrarAlerta('Usuario o contraseña incorrecto');
+            this.toast('Usuario o contraseña incorrecto');
           }
           return throwError(error);
         })
@@ -73,33 +68,32 @@ export class LoginPage implements OnInit {
       .subscribe(async (resp: any) => {
         if (resp) {
           // Almacenar los datos del usuario en el almacenamiento local
-          this.authService.login(resp); // Utiliza el método de inicio de sesión del servicio
-  
+          // Almacenar los datos del usuario en el almacenamiento local
+          this.authService.login(resp.data); // Utiliza el método de inicio de sesión del servicio
+          console.log(resp);
+
           // Redirigir al usuario a la página correspondiente
-          if (this.usuario.includes(this.guardia)) {
+          if (resp.perfil === 'guardia') {
             console.log('Redirigiendo a /dashboard-guardia');
             this.router.navigate(['/dashguard']);
-          } else if (this.usuario.includes(this.administrador)) {
+          } else if (resp.perfil === 'administrador') {
             console.log('Redirigiendo a /dashboard-administrador');
-            this.router.navigate(['/dashboard-administrador']);
+            this.router.navigate(['/dashadmin']);
           }
         } else {
-          this.mostrarAlerta('Usuario o contraseña incorrecto');
+          this.toast('Usuario o contraseña incorrecto');
         }
       });
   }
 
-  
 
-  
+  toast(mensaje: string) {
+    const toast = document.createElement('ion-toast');
+    toast.message = mensaje;
+    toast.duration = 2000;
+    toast.cssClass = 'my-toast'; // Añade esta línea
 
-  async mostrarAlerta(mensaje: string) {
-    console.log('Mostrando alerta');
-    let alerta = this.toastCtrl.create({
-      message: mensaje,
-      duration: 2000,
-      position: 'bottom',
-    });
-    (await alerta).present();
+    document.body.appendChild(toast);
+    return toast.present();
   }
-}  
+}

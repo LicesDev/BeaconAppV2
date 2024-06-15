@@ -49,9 +49,13 @@ ion-card {
     border: 2px solid #b1c9ef;
     filter: drop-shadow(0 0 0.2rem rgba(0, 0, 0, 0.575));
   
-    .seccion{
+    .seccion .label{
       margin-left: 20px;
       color: #395886;
+      font-weight: 700;
+    }
+    .seccion .value{
+      color: black;
       font-weight: 700;
     }
     
@@ -151,5 +155,10 @@ ion-modal {
 #datetime{
   color: black;
 }
-
+.total{
+  margin-top: 5px;
+  color: black;
+  font-weight: 700;
+  margin-bottom: 0px;
+}
 
