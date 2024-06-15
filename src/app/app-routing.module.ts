@@ -51,6 +51,10 @@ const routes: Routes = [
     path: 'gestionar-turnos',
     loadChildren: () => import('./pages/administrador/gestionar-turnos/gestionar-turnos.module').then( m => m.GestionarTurnosPageModule)
   },
+  {
+    path: 'gestionar-guardia',
+    loadChildren: () => import('./pages/administrador/gestionar-guardia/gestionar-guardia.module').then( m => m.GestionarGuardiaPageModule)
+  },
 ];
 
 @NgModule({

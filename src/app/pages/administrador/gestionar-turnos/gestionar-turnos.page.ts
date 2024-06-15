@@ -1,3 +1,4 @@
+import { filter } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as bootstrap from 'bootstrap';
@@ -17,7 +18,8 @@ import Swal from 'sweetalert2';
 export class GestionarTurnosPage implements OnInit {
   turnos: any[] = [];
   sedes: any[] = [];
-  turnoActualizado: any = {};
+  sede_new: any;
+
   @ViewChild('sedeSelect') sedeSelect!: IonSelect;
   @ViewChild('fechaInput') fechaInput!: IonInput;
   @ViewChild('ctdGuardiasInput') ctdGuardiasInput!: IonInput;
@@ -51,7 +53,12 @@ export class GestionarTurnosPage implements OnInit {
     this.http
       .get(`https://osolices.pythonanywhere.com/turno/`)
       .subscribe((turnos: any) => {
-        turnos.forEach((turno: any) => {
+
+        const fechaActual = new Date().toISOString().split('T')[0];
+        console.log(fechaActual)
+        const turnosActual = turnos.filter((t: any) =>  new Date(t.fecha) >= new Date(fechaActual));
+        turnosActual.forEach((turno: any) => {
+
           this.http.get(`https://osolices.pythonanywhere.com/sede/`).subscribe((sedeData: any) => {
             console.log(sedeData);
             const sede = sedeData.filter((sedeData: any) => sedeData.id_sede === turno.id_sede);
@@ -102,15 +109,21 @@ export class GestionarTurnosPage implements OnInit {
   }
  actualizarTurnos(id_turno:any) {
  
-  const sede = this.sedeID.value;
+  const sede_old = this.sedeID.value;
+  const sede_new = this.sedeSelect.value ? this.sedeSelect.value.id_sede : this.sedeID.value;
   const fecha = this.fechaInput.value;
   const hora_ini = this.horaIniInput.value;
   const hora_fin = this.horaFinInput.value;
   const remuneracion = this.remuInput.value;
   const ctd_guardias = this.ctdGuardiasInput.value;
 
+  if (sede_old !== sede_new) {
+    this.sede_new= sede_new;
+  }else{
+    this.sede_new= sede_old;
+  }
   console.log(id_turno);
-  console.log(sede);
+  console.log(this.sede_new);
   console.log(fecha);
   console.log(hora_ini);
   console.log(hora_fin);
@@ -124,7 +137,7 @@ const body=  {
   hora_fin: hora_fin,
   remuneracion: remuneracion,
   ctd_guardias: ctd_guardias,
-  id_sede: sede
+  id_sede: this.sede_new
 };
   this.http.put(`https://osolices.pythonanywhere.com/turno/${id_turno}/`, body)
     .subscribe(
@@ -224,6 +237,7 @@ this.http.post(`https://osolices.pythonanywhere.com/turno/`, body)
         this.toast('Turno creado exitosamente');
         this.turnos= [];
         this.getTurnos();
+        this.modalController.dismiss();
       },
       error => {
         console.error(error);
