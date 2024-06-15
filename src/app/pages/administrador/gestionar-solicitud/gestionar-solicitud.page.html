@@ -1,13 +1,67 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>gestionar_solicitud</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="fondo">
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">gestionar_solicitud</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <app-navbar-admin ></app-navbar-admin>
+  
+  <ion-list *ngFor="let solicitud of solicitudes; let i = index" class="lista" [inset]="true">
+    <ion-item-sliding >
+      <ion-item  [button]="true" detail-icon="caret-forward-outline">
+        <ion-avatar style="width: 70px; height: 70px;" aria-hidden="true" slot="start">
+          <img alt="" class="qr" src="../../../../assets/img/formulario.png" />
+        </ion-avatar>
+        <ion-list>
+          <ion-label><p class="datos">Nro Solicitud: {{solicitud.id_solicitud}}</p></ion-label>
+          <ion-label><p class="datos">Tipo Solicitud: <br>{{solicitud.tipo_solicitud}} </p></ion-label>
+          <ion-label><p class="datos">Detalle: {{solicitud.detalle_solicitud}}</p></ion-label>
+          <ion-label><p class="datos">Estado: {{solicitud.estado}}</p></ion-label>
+          <ion-label><p class="datos">Justificación: {{ solicitud.justificacion || 'Sin justificación' }}</p></ion-label>
+          
+        </ion-list>
+
+        <ion-list>
+
+        </ion-list>
+        
+      </ion-item>
+      <ion-item-options slot="end">
+        <ion-item-option color="success">
+          <ion-icon slot="icon-only" name="checkmark-circle-outline" id="incidencia-{{i}}" (click)=" abrirModalApruebo(solicitud)"></ion-icon>
+        </ion-item-option>
+        <ion-item-option color="danger" expandable="true">
+          <ion-icon slot="icon-only" name="close-circle-outline" id="incidencia-{{i}}" (click)="abrirModalRechazo(solicitud)"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+
+    <ion-modal #modalRef trigger="incidencia-{{i}}">
+      <ng-template>
+        <ion-content>
+          <ion-toolbar>
+            <ion-title>Modificar Solicitud</ion-title>
+          </ion-toolbar>
+          <ion-list>
+            <ion-item>
+              <ion-input #nroInput  label="Nro solicitud: " [disabled]="true" labelPlacement="floating"value="{{solicitud.id_solicitud}}"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input #tipoInput  label="Tipo solicitud: " [disabled]="true" labelPlacement="floating" value="{{solicitud.tipo_solicitud}}"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input #estadoInput  label="Estado: " [disabled]="true" labelPlacement="floating" value="{{solicitud_modificada.estado}}"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-textarea #justificaciopnTextarea label="Justificación" labelPlacement="stacked"  placeholder="Describa detalladamente la Justificación"></ion-textarea>
+            </ion-item>
+
+    
+            <ion-buttons class="btns">
+              <ion-button class="btncancelar" (click)="modal.dismiss()">Cancelar</ion-button>
+              <ion-button class="btnenviar" [strong]="true" (click)="confirmarActualizar(solicitud.id_solicitud)" >Modificar</ion-button>
+            </ion-buttons>
+          </ion-list>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+
+  </ion-list>
+
 </ion-content>
