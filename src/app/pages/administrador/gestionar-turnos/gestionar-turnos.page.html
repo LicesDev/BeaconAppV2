@@ -1,13 +1,75 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>gestionar_turnos</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="fondo">
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">gestionar_turnos</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <app-navbar-admin ></app-navbar-admin>
+  
+  <ion-list *ngFor="let turno of turnos; let i = index" class="lista" [inset]="true">
+    <ion-item-sliding >
+      <ion-item  [button]="true" detail-icon="caret-forward-outline">
+        <ion-avatar style="width: 70px; height: 70px;" aria-hidden="true" slot="start">
+          <img alt="" class="qr" src="{{turno.foto}}" />
+        </ion-avatar>
+        <ion-list>        
+          <ion-label style="padding-top: 10px;" ><h5 style="color: #395886; font-weight: 700;">{{turno.nombre}}</h5></ion-label>
+          <ion-label><p class="datos">Fecha: {{turno.fecha}}</p></ion-label>
+          <ion-label><p class="datos">Guardias solicitados: {{turno.ctd_guardias}}</p></ion-label>
+          <ion-label><p class="datos">Hora inicio: {{turno.horario_inicio}}</p></ion-label>
+          <ion-label><p class="datos">Hora término: {{turno.hora_fin}}</p></ion-label>
+          <ion-label style="padding-bottom: 10px;"><p class="datos" >Remuneración: $ {{ turno.remuneracion | currency:'CLP':'':'1.0-0':'es-CL' }}</p></ion-label>
+        </ion-list>
+
+        <ion-list>
+
+        </ion-list>
+        
+      </ion-item>
+      <ion-item-options slot="end">
+        <ion-item-option color="secondary">
+          <ion-icon slot="icon-only" name="pencil" id="incidencia-{{i}}" (click)="obtenerSedes()"></ion-icon>
+        </ion-item-option>
+        <ion-item-option color="danger" expandable="true">
+          <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+
+    <ion-modal #modal trigger="incidencia-{{i}}">
+      <ng-template>
+        <ion-content>
+          <ion-toolbar>
+            <ion-title>Modificar Turno</ion-title>
+          </ion-toolbar>
+          <ion-list>
+            <ion-item>
+              <ion-select label="Sedes: " placeholder="{{turno.nombre}}">
+                <ion-select-option *ngFor="let sede of sedes; let j = index" lines="none" labelPlacement="floating" detail="false" [value]="sede">{{sede.nombre}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-input label="Fecha: (YYYY-MM-DD) " labelPlacement="floating"value="{{turno.fecha}}"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input label="Cantidad de Guardias: "  labelPlacement="floating" type="number"  value="{{turno.ctd_guardias}}"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input label="Horario de inicio: (HH:MM)"  labelPlacement="floating" value="{{turno.horario_inicio}}"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input label="Horario de termino: (HH:MM)" labelPlacement="floating" value="{{turno.hora_fin}}"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input label="Remuneración: " labelPlacement="floating" value="{{turno.remuneracion}}"></ion-input>
+            </ion-item>
+
+            
+            <ion-buttons class="btns">
+              <ion-button class="btncancelar" (click)="modal.dismiss()">Cancelar</ion-button>
+              <ion-button class="btnenviar" [strong]="true">Modificar</ion-button>
+            </ion-buttons>
+          </ion-list>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+
+  </ion-list>
+
 </ion-content>
