@@ -27,7 +27,7 @@
           <ion-icon slot="icon-only" name="pencil" id="incidencia-{{i}}" (click)="obtenerSedes()"></ion-icon>
         </ion-item-option>
         <ion-item-option color="danger" expandable="true">
-          <ion-icon slot="icon-only" name="trash"></ion-icon>
+          <ion-icon slot="icon-only" name="trash" (click)="confirmarEliminar(turno.id_turno)"></ion-icon>
         </ion-item-option>
       </ion-item-options>
     </ion-item-sliding>
@@ -40,30 +40,31 @@
           </ion-toolbar>
           <ion-list>
             <ion-item>
-              <ion-select label="Sedes: " placeholder="{{turno.nombre}}">
+              <ion-input #sedeID style="display: none;" aria-label="Sede" value="{{turno.id_sede}}"></ion-input>
+              <ion-select #sedeSelect  label="Sedes: " placeholder="{{turno.nombre}}">
                 <ion-select-option *ngFor="let sede of sedes; let j = index" lines="none" labelPlacement="floating" detail="false" [value]="sede">{{sede.nombre}}</ion-select-option>
               </ion-select>
             </ion-item>
             <ion-item>
-              <ion-input label="Fecha: (YYYY-MM-DD) " labelPlacement="floating"value="{{turno.fecha}}"></ion-input>
+              <ion-input #fechaInput  label="Fecha: (YYYY-MM-DD) "  labelPlacement="floating"value="{{turno.fecha}}"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-input label="Cantidad de Guardias: "  labelPlacement="floating" type="number"  value="{{turno.ctd_guardias}}"></ion-input>
+              <ion-input #ctdGuardiasInput  label="Cantidad de Guardias: "  labelPlacement="floating" type="number"  value="{{turno.ctd_guardias}}"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-input label="Horario de inicio: (HH:MM)"  labelPlacement="floating" value="{{turno.horario_inicio}}"></ion-input>
+              <ion-input #horaIniInput  label="Horario de inicio: (HH:MM)"  labelPlacement="floating" value="{{turno.horario_inicio}}"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-input label="Horario de termino: (HH:MM)" labelPlacement="floating" value="{{turno.hora_fin}}"></ion-input>
+              <ion-input #horaFinInput label="Horario de termino: (HH:MM)" labelPlacement="floating" value="{{turno.hora_fin}}"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-input label="Remuneración: " labelPlacement="floating" value="{{turno.remuneracion}}"></ion-input>
+              <ion-input #remuInput  label="Remuneración: "  labelPlacement="floating" value="{{turno.remuneracion}}"></ion-input>
             </ion-item>
 
             
             <ion-buttons class="btns">
               <ion-button class="btncancelar" (click)="modal.dismiss()">Cancelar</ion-button>
-              <ion-button class="btnenviar" [strong]="true">Modificar</ion-button>
+              <ion-button class="btnenviar" [strong]="true" (click)="confirmarActualizar(turno.id_turno)">Modificar</ion-button>
             </ion-buttons>
           </ion-list>
         </ion-content>
@@ -72,4 +73,46 @@
 
   </ion-list>
 
+  <div class="tope"></div>
+  <div class="boton"><button class="botonGenerar" id="solicitud" (click)="obtenerSedes()" >Crear Turno</button></div>
+
+
+  
+  <ion-modal #modal trigger="solicitud">
+    <ng-template>
+      <ion-content>
+        <ion-toolbar>
+          <ion-title>Modificar Turno</ion-title>
+        </ion-toolbar>
+        <ion-list>
+          <ion-item>
+            <ion-select #sedeSelectC  label="Sedes: " placeholder="">
+              <ion-select-option *ngFor="let sede of sedes; let j = index" lines="none" labelPlacement="floating" detail="false" [value]="sede">{{sede.nombre}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-input #fechaInputC  label="Fecha: (YYYY-MM-DD) "  labelPlacement="floating"value=""></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input #ctdGuardiasInputC  label="Cantidad de Guardias: "  labelPlacement="floating" type="number"  value=""></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input #horaIniInputC  label="Horario de inicio: (HH:MM)"  labelPlacement="floating" value=""></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input #horaFinInputC label="Horario de termino: (HH:MM)" labelPlacement="floating" value=""></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input #remuInputC  label="Remuneración: " type="number" labelPlacement="floating" value=""></ion-input>
+          </ion-item>
+
+          
+          <ion-buttons class="btns">
+            <ion-button class="btncancelar" (click)="modal.dismiss()">Cancelar</ion-button>
+            <ion-button class="btnenviar" [strong]="true" (click)="confirmarCrear()">Crear</ion-button>
+          </ion-buttons>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>

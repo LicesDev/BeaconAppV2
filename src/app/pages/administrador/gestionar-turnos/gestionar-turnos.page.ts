@@ -5,8 +5,9 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../servicio/auth.service';
 import { ModalController } from '@ionic/angular';
 import { ViewChild } from '@angular/core';
-import { IonSelect, IonTextarea } from '@ionic/angular';
+import { IonSelect, IonTextarea, IonInput, IonDatetime } from '@ionic/angular';
 import { ChangeDetectorRef } from '@angular/core';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-gestionar-turnos',
@@ -16,7 +17,24 @@ import { ChangeDetectorRef } from '@angular/core';
 export class GestionarTurnosPage implements OnInit {
   turnos: any[] = [];
   sedes: any[] = [];
+  turnoActualizado: any = {};
+  @ViewChild('sedeSelect') sedeSelect!: IonSelect;
+  @ViewChild('fechaInput') fechaInput!: IonInput;
+  @ViewChild('ctdGuardiasInput') ctdGuardiasInput!: IonInput;
+  @ViewChild('horaIniInput') horaIniInput!: IonInput;
+  @ViewChild('horaFinInput') horaFinInput!: IonInput;
+  @ViewChild('remuInput') remuInput!: IonInput;
+  @ViewChild('sedeID') sedeID!: IonInput;
+
+  @ViewChild('sedeSelectC') sedeSelectC!: IonSelect;
+  @ViewChild('fechaInputC') fechaInputC!: IonInput;
+  @ViewChild('ctdGuardiasInputC') ctdGuardiasInputC!: IonInput;
+  @ViewChild('horaIniInputC') horaIniInputC!: IonInput;
+  @ViewChild('horaFinInputC') horaFinInputC!: IonInput;
+  @ViewChild('remuInputC') remuInputC!: IonInput;
+  @ViewChild('sedeIDC') sedeIDC!: IonInput;
   
+
   constructor(
     private router: Router,
     private http: HttpClient,
@@ -50,6 +68,7 @@ export class GestionarTurnosPage implements OnInit {
             turno.foto = foto;
   
             this.turnos.push(turno);
+            console.log(this.turnos);
           });
         }); 
       });
@@ -64,8 +83,164 @@ export class GestionarTurnosPage implements OnInit {
     });
   }
 
-  actualizarTurnos(){
 
+  async confirmarActualizar(id_turno: any) {
+    const result = await Swal.fire({
+      title: 'Confirmación',
+      text: '¿Estás seguro desea modificar este turno?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, modificar',
+      cancelButtonText: 'No, cancelar',
+      heightAuto: false,
+      confirmButtonColor: 'rgb(57, 88, 134)',
+    });
+  
+    if (result.isConfirmed) {
+      await this.actualizarTurnos(id_turno);
+    }
   }
+ actualizarTurnos(id_turno:any) {
+ 
+  const sede = this.sedeID.value;
+  const fecha = this.fechaInput.value;
+  const hora_ini = this.horaIniInput.value;
+  const hora_fin = this.horaFinInput.value;
+  const remuneracion = this.remuInput.value;
+  const ctd_guardias = this.ctdGuardiasInput.value;
+
+  console.log(id_turno);
+  console.log(sede);
+  console.log(fecha);
+  console.log(hora_ini);
+  console.log(hora_fin);
+  console.log(remuneracion);
+  console.log(ctd_guardias);
+
+const body=  {
+  id_turno: id_turno,
+  fecha: fecha,
+  horario_inicio: hora_ini,
+  hora_fin: hora_fin,
+  remuneracion: remuneracion,
+  ctd_guardias: ctd_guardias,
+  id_sede: sede
+};
+  this.http.put(`https://osolices.pythonanywhere.com/turno/${id_turno}/`, body)
+    .subscribe(
+      response => {
+        console.log(response);
+        this.toast('Turno Modificado exitosamente')
+        this.modalController.dismiss();
+      },
+      error => {
+        console.error(error);
+        this.toast('Error al modificar')
+      }
+    );
+}
+
+async confirmarEliminar(id_turno: any) {
+  const result = await Swal.fire({
+    title: 'Confirmación',
+    text: '¿Estás seguro desea eliminar este turno?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'No, cancelar',
+    heightAuto: false,
+    confirmButtonColor: 'rgb(57, 88, 134)',
+  });
+
+  if (result.isConfirmed) {
+    await this.eliminarTurno(id_turno);
+  }
+}
+
+eliminarTurno(id_turno: any) {
+  this.http.delete(`https://osolices.pythonanywhere.com/turno/${id_turno}/`)
+    .subscribe(
+      response => {
+        console.log(response);
+        this.toast('Turno eliminado exitosamente');
+        this.turnos= [];
+        this.getTurnos();
+      },
+      error => {
+        console.error(error);
+        this.toast('Error al eliminar');
+      }
+    );
+}
+
+async confirmarCrear() {
+  const result = await Swal.fire({
+    title: 'Confirmación',
+    text: '¿Estás seguro desea crear este turno?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, crear',
+    cancelButtonText: 'No, cancelar',
+    heightAuto: false,
+    confirmButtonColor: 'rgb(57, 88, 134)',
+  });
+
+  if (result.isConfirmed) {
+    await this.crearTurno();
+  }
+}
+
+crearTurno(){
+  console.log(this.sedeSelectC.value.id_sede)
+
+  const sede = this.sedeSelectC.value.id_sede;
+  const fecha = this.fechaInputC.value;
+  const hora_ini = this.horaIniInputC.value;
+  const hora_fin = this.horaFinInputC.value;
+  const remuneracion = this.remuInputC.value;
+  const ctd_guardias = this.ctdGuardiasInputC.value;
+
+
+  console.log(sede);
+  console.log(fecha);
+  console.log(hora_ini);
+  console.log(hora_fin);
+  console.log(remuneracion);
+  console.log(ctd_guardias);
+
+const body=  {
+  fecha: fecha,
+  horario_inicio: hora_ini,
+  hora_fin: hora_fin,
+  remuneracion: remuneracion,
+  ctd_guardias: ctd_guardias,
+  id_sede: sede
+};
+
+this.http.post(`https://osolices.pythonanywhere.com/turno/`, body)
+    .subscribe(
+      response => {
+        console.log(response);
+        this.toast('Turno creado exitosamente');
+        this.turnos= [];
+        this.getTurnos();
+      },
+      error => {
+        console.error(error);
+        this.toast('Error al crear');
+      }
+    );
+}
+
+toast(mensaje: string) {
+  const toast = document.createElement('ion-toast');
+  toast.message = mensaje;
+  toast.duration = 2000;
+  toast.cssClass = 'my-toast'; // Añade esta línea
+
+  document.body.appendChild(toast);
+  return toast.present();
+}
+
 
 }
