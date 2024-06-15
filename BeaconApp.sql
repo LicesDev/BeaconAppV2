@@ -30,7 +30,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `AUTENTIFICAR` (
   `id_autentificar` INT NOT NULL AUTO_INCREMENT,
   `nombre_usuario` VARCHAR(45) NOT NULL,
-  `contrasena` VARCHAR(45) NOT NULL,
+  `contrasena` VARCHAR(150) NOT NULL,
   `id_perfil` INT NOT NULL,
   INDEX `fk_AUTENTIFICAR_PERFIL1_idx` (`id_perfil` ASC) VISIBLE,
   PRIMARY KEY (`id_autentificar`),

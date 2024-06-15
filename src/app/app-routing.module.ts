@@ -55,6 +55,10 @@ const routes: Routes = [
     path: 'gestionar-guardia',
     loadChildren: () => import('./pages/administrador/gestionar-guardia/gestionar-guardia.module').then( m => m.GestionarGuardiaPageModule)
   },
+  {
+    path: 'gestionar-sede',
+    loadChildren: () => import('./pages/administrador/gestionar-sede/gestionar-sede.module').then( m => m.GestionarSedePageModule)
+  },
 ];
 
 @NgModule({

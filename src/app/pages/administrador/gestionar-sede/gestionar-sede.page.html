@@ -2,21 +2,18 @@
 
   <app-navbar-admin ></app-navbar-admin>
   
-  <ion-list *ngFor="let guardia of guardias; let i = index" class="lista" [inset]="true">
+  <ion-list *ngFor="let sede of sedes; let i = index" class="lista" [inset]="true">
     <ion-item-sliding >
       <ion-item  [button]="true" detail-icon="caret-forward-outline">
         <ion-avatar style="width: 70px; height: 70px;" aria-hidden="true" slot="start">
-          <img alt="" class="qr" src="{{guardia.foto_perfil}}" />
+          <img alt="" class="qr" src="{{sede.foto}}" />
         </ion-avatar>
         <ion-list>        
-          
-          <ion-label><p class="datos">Nombre: {{guardia.p_nombre}} {{guardia.s_nombre}}  {{guardia.p_apellido}} {{guardia.s_apellido}}</p></ion-label>
-          <ion-label><p class="datos">Rut: {{guardia.rut_guarida}}</p></ion-label>
-          <ion-label><p class="datos">Fecha Nacimiento: {{guardia.fecha_nac}}</p></ion-label>
-          <ion-label><p class="datos">Correo: {{guardia.correo}}</p></ion-label>
-          <ion-label><p class="datos">Telefono: {{guardia.telefono}}</p></ion-label>
-          <ion-label><p class="datos">Dirección: {{guardia.direccion}} </p></ion-label>
-          <ion-label><p class="datos">Comuna: {{guardia.comuna}} </p></ion-label>
+          <ion-label><p class="datos">Nombre: {{sede.nombre}}</p></ion-label>
+          <ion-label><p class="datos">Correo: {{sede.correo}}</p></ion-label>
+          <ion-label><p class="datos">Telefono: {{sede.telefono}}</p></ion-label>
+          <ion-label><p class="datos">Dirección: {{sede.direccion}} </p></ion-label>
+          <ion-label><p class="datos">Comuna: {{sede.comuna}} </p></ion-label>
         </ion-list>
 
         <ion-list>
@@ -29,7 +26,7 @@
           <ion-icon slot="icon-only" name="pencil" id="incidencia-{{i}}" (click)="obtenerComunas()"></ion-icon>
         </ion-item-option>
         <ion-item-option color="danger" expandable="true">
-          <ion-icon slot="icon-only" name="trash" (click)="confirmarEliminar(guardia.rut_guarida)"></ion-icon>
+          <ion-icon slot="icon-only" name="trash" (click)="confirmarEliminar(sede.rut_guarida)"></ion-icon>
         </ion-item-option>
       </ion-item-options>
     </ion-item-sliding>
@@ -42,38 +39,23 @@
           </ion-toolbar>
           <ion-list>
             <ion-item>
-              <ion-input #pNombreInput  label="Primer nombre: "  labelPlacement="floating"value="{{guardia.p_nombre}}"></ion-input>
-            </ion-item>
-            <ion-item>    
-              <ion-input #sNombreInput  label="Segundo nombre: "  labelPlacement="floating"value="{{guardia.s_nombre}}"></ion-input>
+              <ion-input #pNombreInput  label="Primer nombre: "  labelPlacement="floating"value="{{sede.nombre}}"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-input #pApellidoInput  label="Primer apellido: "  labelPlacement="floating"value="{{guardia.p_apellido}}"></ion-input>
+              <ion-input #correoInput  label="Correo: "  labelPlacement="floating" value="{{sede.correo}}"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-input #sApellidoInput  label="Segundo apellido: "  labelPlacement="floating"value="{{guardia.s_apellido}}"></ion-input>
+              <ion-input #telefonoInput  label="Telefono: (900000000) "  labelPlacement="floating" type="number"  value="{{sede.telefono}}"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-input #rutInput  label="Rut: (9999999-9)"  labelPlacement="floating" value="{{guardia.rut_guarida}}"></ion-input>
+              <ion-input #direccionInput  label="Dirección: "  labelPlacement="floating" value="{{sede.direccion}}"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-input #fechaNacInput label="Fecha de Nacimiento: (YYYY-MM-DD)" labelPlacement="floating" value="{{guardia.fecha_nac}}"></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-input #correoInput  label="Correo: "  labelPlacement="floating" value="{{guardia.correo}}"></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-input #telefonoInput  label="Telefono: (900000000) "  labelPlacement="floating" type="number"  value="{{guardia.telefono}}"></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-input #direccionInput  label="Dirección: "  labelPlacement="floating" value="{{guardia.direccion}}"></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-input #comunaID style="display: none;" aria-label="Sede" value="{{guardia.id_comuna}}"></ion-input>
-              <ion-select #comunaSelect  label="Comuna: " placeholder="{{guardia.comuna}}">
+              <ion-input #comunaID style="display: none;" aria-label="Sede" value="{{sede.id_comuna}}"></ion-input>
+              <ion-select #comunaSelect  label="Comuna: " placeholder="{{sede.comuna}}">
                 <ion-select-option *ngFor="let comuna of comunas; let j = index"  lines="none" labelPlacement="floating" detail="false" [value]="comuna"> {{comuna.descripcion}} </ion-select-option>
               </ion-select>
-              <ion-input #autentiID style="display: none;" aria-label="Sede" value="{{guardia.id_autentificar}}"></ion-input>
+              <ion-input #autentiID style="display: none;" aria-label="Sede" value="{{sede.id_autentificar}}"></ion-input>
             </ion-item>
 
 
@@ -81,7 +63,7 @@
             
             <ion-buttons class="btns">
               <ion-button class="btncancelar" (click)="modal.dismiss()">Cancelar</ion-button>
-              <ion-button class="btnenviar" [strong]="true" (click)="confirmarActualizar(guardia.rut_guarida)" >Modificar</ion-button>
+              <ion-button class="btnenviar" [strong]="true" (click)="confirmarActualizar(sede.rut_guarida)" >Modificar</ion-button>
             </ion-buttons>
           </ion-list>
         </ion-content>
@@ -91,7 +73,7 @@
   </ion-list>
 
   <div class="tope"></div>
-  <div class="boton"><button class="botonGenerar" id="crear" (click)="obtenerComunas()" >Crear Guardia</button></div>
+  <div class="boton"><button class="botonGenerar" id="crear" (click)="obtenerComunas()" >Crear sede</button></div>
 
   <ion-modal #modal trigger="crear">
     <ng-template>
@@ -135,7 +117,7 @@
 
           <ion-buttons class="btns">
             <ion-button class="btncancelar" (click)="modal.dismiss()">Cancelar</ion-button>
-            <ion-button class="btnenviar" [strong]="true" (click)="confirmarCrear()" >Crear</ion-button>
+            <ion-button class="btnenviar" [strong]="true" (click)="confirmarCrear()" >Modificar</ion-button>
           </ion-buttons>
         </ion-list>
       </ion-content>

@@ -9,15 +9,15 @@ import { ViewChild } from '@angular/core';
 import { IonSelect, IonTextarea, IonInput, IonDatetime } from '@ionic/angular';
 import { ChangeDetectorRef } from '@angular/core';
 import Swal from 'sweetalert2';
-import * as CryptoJS from 'crypto-js';
+
 
 @Component({
-  selector: 'app-gestionar-guardia',
-  templateUrl: './gestionar-guardia.page.html',
-  styleUrls: ['./gestionar-guardia.page.scss'],
+  selector: 'app-gestionar-sede',
+  templateUrl: './gestionar-sede.page.html',
+  styleUrls: ['./gestionar-sede.page.scss'],
 })
-export class GestionarGuardiaPage implements OnInit {
-  guardias: any[] = [];
+export class GestionarSedePage implements OnInit {
+  sedes: any[] = [];
   comunas: any[] = [];
   comu: any;
   @ViewChild('comunaSelect') comunaSelect!: IonSelect;
@@ -53,25 +53,25 @@ export class GestionarGuardiaPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.getGuardias();
+    this.getSedes();
   }
 
-  getGuardias() {
+  getSedes() {
     this.http
-      .get(`https://osolices.pythonanywhere.com/guardia/`)
-      .subscribe((guardias: any) => {
-        guardias.forEach((guardia: any) => {
+      .get(`https://osolices.pythonanywhere.com/sede/`)
+      .subscribe((sedes: any) => {
+        sedes.forEach((sede: any) => {
           this.http
             .get(
-              `https://osolices.pythonanywhere.com/comuna/${guardia.id_comuna}/`
+              `https://osolices.pythonanywhere.com/comuna/${sede.id_comuna}/`
             )
             .subscribe((comuna: any) => {
               console.log(comuna);
 
-              guardia.comuna = comuna.descripcion;
+              sede.comuna = comuna.descripcion;
 
-              this.guardias.push(guardia);
-              console.log(this.guardias);
+              this.sedes.push(sede);
+              console.log(this.sedes);
             });
         });
       });
@@ -158,8 +158,8 @@ export class GestionarGuardiaPage implements OnInit {
           console.log(response);
           this.toast('Guardia Modificado exitosamente');
           this.modalController.dismiss();
-          this.guardias = [];
-          this.getGuardias();
+          this.sedes = [];
+          this.getSedes();
         },
         (error) => {
           console.error(error);
@@ -192,8 +192,8 @@ export class GestionarGuardiaPage implements OnInit {
         (response) => {
           console.log(response);
           this.toast('Guardia eliminado exitosamente');
-          this.guardias = [];
-          this.getGuardias();
+          this.sedes = [];
+          this.getSedes();
         },
         (error) => {
           console.error(error);
@@ -282,8 +282,8 @@ export class GestionarGuardiaPage implements OnInit {
               (response) => {
                 console.log(response);
                 this.toast('Guardia creado exitosamente');
-                this.guardias = [];
-                this.getGuardias();
+                this.sedes = [];
+                this.getSedes();
                 this.modalController.dismiss();
               },
               (error) => {
@@ -309,3 +309,4 @@ export class GestionarGuardiaPage implements OnInit {
     return toast.present();
   }
 }
+
