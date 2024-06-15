@@ -59,6 +59,10 @@ const routes: Routes = [
     path: 'gestionar-sede',
     loadChildren: () => import('./pages/administrador/gestionar-sede/gestionar-sede.module').then( m => m.GestionarSedePageModule)
   },
+  {
+    path: 'gestionar-solicitud',
+    loadChildren: () => import('./pages/administrador/gestionar-solicitud/gestionar-solicitud.module').then( m => m.GestionarSolicitudPageModule)
+  },
 ];
 
 @NgModule({

@@ -10,7 +10,6 @@ import { IonSelect, IonTextarea, IonInput, IonDatetime } from '@ionic/angular';
 import { ChangeDetectorRef } from '@angular/core';
 import Swal from 'sweetalert2';
 
-
 @Component({
   selector: 'app-gestionar-sede',
   templateUrl: './gestionar-sede.page.html',
@@ -22,11 +21,6 @@ export class GestionarSedePage implements OnInit {
   comu: any;
   @ViewChild('comunaSelect') comunaSelect!: IonSelect;
   @ViewChild('pNombreInput') pNombreInput!: IonInput;
-  @ViewChild('sNombreInput') sNombreInput!: IonInput;
-  @ViewChild('pApellidoInput') pApellidoInput!: IonInput;
-  @ViewChild('sApellidoInput') sApellidoInput!: IonInput;
-  @ViewChild('rutInput') rutInput!: IonInput;
-  @ViewChild('fechaNacInput') fechaNacInput!: IonInput;
   @ViewChild('correoInput') correoInput!: IonInput;
   @ViewChild('telefonoInput') telefonoInput!: IonInput;
   @ViewChild('direccionInput') direccionInput!: IonInput;
@@ -35,11 +29,6 @@ export class GestionarSedePage implements OnInit {
 
   @ViewChild('comunaSelectC') comunaSelectC!: IonSelect;
   @ViewChild('pNombreInputC') pNombreInputC!: IonInput;
-  @ViewChild('sNombreInputC') sNombreInputC!: IonInput;
-  @ViewChild('pApellidoInputC') pApellidoInputC!: IonInput;
-  @ViewChild('sApellidoInputC') sApellidoInputC!: IonInput;
-  @ViewChild('rutInputC') rutInputC!: IonInput;
-  @ViewChild('fechaNacInputC') fechaNacInputC!: IonInput;
   @ViewChild('correoInputC') correoInputC!: IonInput;
   @ViewChild('telefonoInputC') telefonoInputC!: IonInput;
   @ViewChild('direccionInputC') direccionInputC!: IonInput;
@@ -88,7 +77,7 @@ export class GestionarSedePage implements OnInit {
       });
   }
 
-  async confirmarActualizar(rut_guardia: any) {
+  async confirmarActualizar(id_sede: any) {
     const result = await Swal.fire({
       title: 'Confirmación',
       text: '¿Estás seguro desea modificar este turno?',
@@ -101,16 +90,12 @@ export class GestionarSedePage implements OnInit {
     });
 
     if (result.isConfirmed) {
-      await this.actualizarguardias(rut_guardia);
+      await this.actualizarSede(id_sede);
     }
   }
 
-  actualizarguardias(rut_guardia: any) {
-    const p_nombre = this.pNombreInput.value;
-    const s_nombre = this.sNombreInput.value;
-    const p_apellido = this.pApellidoInput.value;
-    const s_apellido = this.sApellidoInput.value;
-    const fecha_nac = this.fechaNacInput.value;
+  actualizarSede(id_sede: any) {
+    const nombre = this.pNombreInput.value;
     const correo = this.correoInput.value;
     const telefono = this.telefonoInput.value;
     const direccion = this.direccionInput.value;
@@ -118,48 +103,35 @@ export class GestionarSedePage implements OnInit {
     const comuna_new = this.comunaSelect.value
       ? this.comunaSelect.value.id_comuna
       : this.comunaID.value;
-    const autentificar = this.autentiID.value;
-
     if (comuna_old !== comuna_new) {
       this.comu = comuna_new;
     } else {
       this.comu = comuna_old;
     }
-    console.log(rut_guardia);
-    console.log(p_nombre);
-    console.log(s_nombre);
-    console.log(p_apellido);
-    console.log(s_apellido);
-    console.log(fecha_nac);
+
+    console.log(nombre);
     console.log(correo);
     console.log(telefono);
     console.log(direccion);
     console.log(this.comu);
-    console.log(autentificar);
 
     const body = {
-      rut_guarida: rut_guardia,
-      p_nombre: p_nombre,
-      s_nombre: s_nombre,
-      p_apellido: p_apellido,
-      s_apellido: s_apellido,
-      fecha_nac: fecha_nac,
+      nombre: nombre,
       correo: correo,
       telefono: telefono,
       direccion: direccion,
-      foto_perfil: '../../../assets/img/perfil/perfil.png',
+      foto: '../../../assets/img/sede/sede.png',
       id_comuna: this.comu,
-      id_autentificar: autentificar,
     };
     this.http
-      .put(`https://osolices.pythonanywhere.com/guardia/${rut_guardia}/`, body)
+      .put(`https://osolices.pythonanywhere.com/sede/${id_sede}/`, body)
       .subscribe(
         (response) => {
           console.log(response);
-          this.toast('Guardia Modificado exitosamente');
-          this.modalController.dismiss();
+          this.toast('Sede modificada exitosamente');
           this.sedes = [];
           this.getSedes();
+          this.modalController.dismiss();
         },
         (error) => {
           console.error(error);
@@ -168,10 +140,10 @@ export class GestionarSedePage implements OnInit {
       );
   }
 
-  async confirmarEliminar(rut_guardia: any) {
+  async confirmarEliminar(id_sede: any) {
     const result = await Swal.fire({
       title: 'Confirmación',
-      text: '¿Estás seguro desea eliminar este turno?',
+      text: '¿Estás seguro desea eliminar esta sede?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, eliminar',
@@ -181,17 +153,17 @@ export class GestionarSedePage implements OnInit {
     });
 
     if (result.isConfirmed) {
-      await this.eliminarGuardia(rut_guardia);
+      await this.eliminarGuardia(id_sede);
     }
   }
 
-  eliminarGuardia(rut_guardia: any) {
+  eliminarGuardia(id_sede: any) {
     this.http
-      .delete(`https://osolices.pythonanywhere.com/guardia/${rut_guardia}/`)
+      .delete(`https://osolices.pythonanywhere.com/sede/${id_sede}/`)
       .subscribe(
         (response) => {
           console.log(response);
-          this.toast('Guardia eliminado exitosamente');
+          this.toast('Sede eliminada exitosamente');
           this.sedes = [];
           this.getSedes();
         },
@@ -205,7 +177,7 @@ export class GestionarSedePage implements OnInit {
   async confirmarCrear() {
     const result = await Swal.fire({
       title: 'Confirmación',
-      text: '¿Estás seguro desea crear este turno?',
+      text: '¿Estás seguro desea crear esta sede?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, crear',
@@ -215,88 +187,46 @@ export class GestionarSedePage implements OnInit {
     });
 
     if (result.isConfirmed) {
-      await this.crearGuardia();
+      await this.crearSede();
     }
   }
 
-  crearGuardia() {
-    const p_nombre =
+  crearSede() {
+    const nombre =
       (this.pNombreInputC.value as string)?.charAt(0).toUpperCase() +
         (this.pNombreInputC.value as string)?.slice(1).toLowerCase() ?? '';
-    const s_nombre =
-      (this.sNombreInputC.value as string)?.charAt(0).toUpperCase() +
-        (this.sNombreInputC.value as string)?.slice(1).toLowerCase() ?? '';
-    const p_apellido =
-      (this.pApellidoInputC.value as string)?.charAt(0).toUpperCase() +
-        (this.pApellidoInputC.value as string)?.slice(1).toLowerCase() ?? '';
-    const s_apellido =
-      (this.sApellidoInputC.value as string)?.charAt(0).toUpperCase() +
-        (this.sApellidoInputC.value as string)?.slice(1).toLowerCase() ?? '';
-    const fecha_nac = this.fechaNacInputC.value ?? '';
+
     const correo = (this.correoInputC.value as string)?.toLowerCase() ?? '';
     const telefono = this.telefonoInputC.value ?? '';
     const direccion = this.direccionInputC.value ?? '';
-    const rut = this.rutInputC.value ?? '';
     const comuna_new = this.comunaSelectC.value
       ? this.comunaSelectC.value.id_comuna
       : 1;
 
-    const password = rut as string; // La contraseña que quieres hashear
-    const hashedPassword = CryptoJS.SHA256(password).toString();
-
-    const usuario = p_nombre.toLowerCase() + '.' + p_apellido.toLowerCase();
     const body = {
-      nombre_usuario: usuario,
-      contrasena: hashedPassword,
-      id_perfil: 2,
+      nombre: nombre,
+      direccion: direccion,
+      telefono: telefono,
+      correo: correo,
+      foto: '../../../assets/img/sede/sede.png',
+      id_comuna: comuna_new,
     };
-    console.log(hashedPassword);
-
-    interface AutentificarResponse {
-      id_autentificar: number;
-    }
-    this.http
-      .post(`https://osolices.pythonanywhere.com/autentificar/`, body)
-      .subscribe(
-        (response:any) => {
-          console.log(response as AutentificarResponse);
-          const autentificar = response.id_autentificar;
-          const body = {
-            rut_guarida: rut,
-            p_nombre: p_nombre,
-            s_nombre: s_nombre,
-            p_apellido: p_apellido,
-            s_apellido: s_apellido,
-            fecha_nac: fecha_nac,
-            correo: correo,
-            telefono: telefono,
-            direccion: direccion,
-            foto_perfil: '../../../assets/img/perfil/perfil.png',
-            id_comuna: comuna_new,
-            id_autentificar: autentificar,
-          };
-
-          this.http
-            .post(`https://osolices.pythonanywhere.com/guardia/`, body)
-            .subscribe(
-              (response) => {
-                console.log(response);
-                this.toast('Guardia creado exitosamente');
-                this.sedes = [];
-                this.getSedes();
-                this.modalController.dismiss();
-              },
-              (error) => {
-                console.error(error);
-                this.toast('Error al crear');
-              }
-            );
-        },
-        (error) => {
-          console.error(error);
-          this.toast('Error al crear el usuario');
-        }
-      );
+        this.http
+          .post(`https://osolices.pythonanywhere.com/sede/`, body)
+          .subscribe(
+            (response) => {
+              console.log(response);
+              this.toast('Sede creada exitosamente');
+              this.sedes = [];
+              this.getSedes();
+              this.modalController.dismiss();
+            },
+            (error) => {
+              console.error(error);
+              this.toast('Error al crear');
+            }
+          );
+      
   }
 
   toast(mensaje: string) {
@@ -309,4 +239,3 @@ export class GestionarSedePage implements OnInit {
     return toast.present();
   }
 }
-

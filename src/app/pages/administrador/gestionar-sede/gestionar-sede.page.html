@@ -26,7 +26,7 @@
           <ion-icon slot="icon-only" name="pencil" id="incidencia-{{i}}" (click)="obtenerComunas()"></ion-icon>
         </ion-item-option>
         <ion-item-option color="danger" expandable="true">
-          <ion-icon slot="icon-only" name="trash" (click)="confirmarEliminar(sede.rut_guarida)"></ion-icon>
+          <ion-icon slot="icon-only" name="trash" (click)="confirmarEliminar(sede.id_sede)"></ion-icon>
         </ion-item-option>
       </ion-item-options>
     </ion-item-sliding>
@@ -58,12 +58,9 @@
               <ion-input #autentiID style="display: none;" aria-label="Sede" value="{{sede.id_autentificar}}"></ion-input>
             </ion-item>
 
-
-
-            
             <ion-buttons class="btns">
               <ion-button class="btncancelar" (click)="modal.dismiss()">Cancelar</ion-button>
-              <ion-button class="btnenviar" [strong]="true" (click)="confirmarActualizar(sede.rut_guarida)" >Modificar</ion-button>
+              <ion-button class="btnenviar" [strong]="true" (click)="confirmarActualizar(sede.id_sede)" >Modificar</ion-button>
             </ion-buttons>
           </ion-list>
         </ion-content>
@@ -83,22 +80,7 @@
         </ion-toolbar>
         <ion-list>
           <ion-item>
-            <ion-input #pNombreInputC  label="Primer nombre: "  labelPlacement="floating"value=""></ion-input>
-          </ion-item>
-          <ion-item>    
-            <ion-input #sNombreInputC  label="Segundo nombre: "  labelPlacement="floating"value=""></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-input #pApellidoInputC  label="Primer apellido: "  labelPlacement="floating"value=""></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-input #sApellidoInputC  label="Segundo apellido: "  labelPlacement="floating"value=""></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-input #rutInputC  label="Rut: (9999999-9)"  labelPlacement="floating" value=""></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-input #fechaNacInputC label="Fecha de Nacimiento: (YYYY-MM-DD)" labelPlacement="floating" value=""></ion-input>
+            <ion-input #pNombreInputC  label="Nombre sede: "  labelPlacement="floating"value=""></ion-input>
           </ion-item>
           <ion-item>
             <ion-input #correoInputC  label="Correo: "  labelPlacement="floating" value=""></ion-input>
