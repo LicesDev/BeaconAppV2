@@ -63,6 +63,14 @@ const routes: Routes = [
     path: 'gestionar-solicitud',
     loadChildren: () => import('./pages/administrador/gestionar-solicitud/gestionar-solicitud.module').then( m => m.GestionarSolicitudPageModule)
   },
+  {
+    path: 'gestionar-incidencias',
+    loadChildren: () => import('./pages/administrador/gestionar-incidencias/gestionar-incidencias.module').then( m => m.GestionarIncidenciasPageModule)
+  },
+  {
+    path: 'reportes',
+    loadChildren: () => import('./pages/administrador/reportes/reportes.module').then( m => m.ReportesPageModule)
+  },
 ];
 
 @NgModule({

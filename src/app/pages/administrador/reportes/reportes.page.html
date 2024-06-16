@@ -1,0 +1,90 @@
+<ion-content class="fondo">
+
+  <app-navbar-admin ></app-navbar-admin>
+  
+  <div class="filtros">
+    <div class="fecha">
+      <button class="btnfiltro" (click)="openModalFecha()" value="currentValue">Fecha: {{currentValue.toString()
+        .split('-')[0]}}- {{currentValue.toString()
+          .split('-')[1]}}</button>
+  
+      <ion-modal #modal [isOpen]="showModal" (didDismiss)="onDidDismissFecha($event)" [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime
+            id="datetime"
+            presentation="month-year"
+            (ionChange)="onIonChange($event)"
+            [value]="currentValue"
+          ></ion-datetime>
+          <button class="seleccionar" (click)="modal.dismiss(currentValue, 'confirm')">Seleccionar</button>
+        </ng-template>
+      </ion-modal>
+  
+      
+    </div>
+
+    <div class="fecha">
+      <button class="btnfiltro" (click)="openModalSede()">Sede: {{currentNombreSede}} </button>
+
+<ion-modal class="sede" #modalSede  [isOpen]="showModalSede" (didDismiss)="onDidDismissSede($event)" [keepContentsMounted]="true">
+  <ng-template>
+    <ion-picker>
+      <ion-picker-column [value]="currentValueSede" (ionChange)="onSedeChange($event)">
+        <ion-picker-column-option *ngFor="let sede of sedes; let i = index" value="{{sede.id_sede}}">{{sede.nombre}}</ion-picker-column-option>
+      </ion-picker-column>
+    </ion-picker>
+    <button class="seleccionar" (click)="modalSede.dismiss(currentValueSede, 'confirm')">Seleccionar</button>
+  </ng-template>
+</ion-modal>
+    </div>
+  </div>
+  
+
+  
+ <!--Carta-->
+ <div class="contenedor">
+  <ion-list class="fondo">
+    <ng-container *ngIf="incidencias.length; else noTurnos">
+    <ion-item *ngFor="let incidencia of incidencias; let i = index" lines="none" detail="false" button (click)="incidencia.expanded = !incidencia.expanded" >
+      <ion-card >
+    
+          <div class="card-content">
+            <ion-card-header>
+              <ion-card-title>Nro Incidencia: {{incidencia.id_incidencia}}</ion-card-title>          
+            </ion-card-header>
+            <p class="seccion">Fecha: {{incidencia.fecha}}</p>
+            <p class="seccion">Sede: {{incidencia.sede}}</p>
+            <p class="seccion">Dirección: {{incidencia.direccion}}</p>
+            <ion-card-content>
+
+              <ion-img *ngIf="!incidencia.expanded" src="./../../../assets/img/flecha.png" class="flecha"></ion-img>
+
+              <div *ngIf="incidencia.expanded" >
+                <p class="seccion">Guardia que reporto: {{incidencia.guardia}}</p>
+                <p class="seccion">Detalle de la Incidencia: <br> {{incidencia.detalle_incidencia}}</p>
+                <ion-img *ngIf="incidencia.expanded" src="./../../../assets/img/flecha2.png" class="flecha"></ion-img>
+              </div>
+
+            </ion-card-content>
+          </div>
+
+
+      </ion-card>
+     
+    </ion-item>
+  </ng-container>
+
+  <ng-template #noTurnos>
+    <ion-item>
+      <ion-card>
+        <ion-card-header>
+          <p style="margin: auto;">No hay incidencias</p>
+        </ion-card-header>
+      </ion-card>
+    </ion-item>
+  </ng-template>
+  </ion-list>
+</div>
+
+
+</ion-content>
