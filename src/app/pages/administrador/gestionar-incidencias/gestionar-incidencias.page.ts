@@ -25,6 +25,8 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
   styleUrls: ['./gestionar-incidencias.page.scss'],
 })
 export class GestionarIncidenciasPage implements OnInit {
+  logo: any;
+  filas: any[] = [];
   incidencias: any[] = [];
   currentValue = new Date().toISOString();
   currentValueSede = 0;
@@ -204,50 +206,6 @@ export class GestionarIncidenciasPage implements OnInit {
       this.createPDF();
     }
   }
-  generatePDF(incidencias: any[]) {
-    const doc = new jsPDF();
-  
-    // Asegúrate de tener el logo como una cadena base64 o un URL
-    const logo = '../../../assets/img/Logo2.png'; // Reemplaza esto con tu imagen codificada en base64
-  
-    // Define las columnas y sus títulos
-    const columns = [
-      { header: 'ID', dataKey: 'id_incidencia' },
-      { header: 'Sede', dataKey: 'sede' },
-      { header: 'Direccion', dataKey: 'direccion' },
-      { header: 'Fecha', dataKey: 'fecha' },
-      { header: 'Guardia', dataKey: 'guardia' },
-      { header: 'Detalle', dataKey: 'detalle_incidencia' },
-      // Agrega más columnas según necesites
-    ];
-  
-    const fecha = moment().tz('America/Santiago').format();
-    const fecha2 = fecha.toString().split('T')[0]; 
-    const hora=  fecha.toString().split('T')[1]; 
-  const hora1= hora.toString().split(':')[0];
-  const hora2= hora.toString().split(':')[1];  
-    // Genera la tabla con los datos de incidencias
-    autoTable(doc, {
-      startY: 40, // Ajusta este valor según sea necesario para bajar la tabla
-      columns: columns,
-      body: incidencias,
-      didDrawPage: (data) => {
-        // Agrega el título y el logo
-        doc.addImage(logo, 'PNG', 15, 10, 20, 20); // Ajusta las coordenadas y el tamaño según sea necesario
-        doc.text('Reporte de Incidencias', 40, 15); // Ajusta las coordenadas según sea necesario
-  
-        // Cambia el tamaño de la fuente para el texto "Generado el:"
-        doc.setFontSize(10); // Cambia el tamaño de la fuente a uno más pequeño
-        doc.text('Generado el ' + fecha2 + ' a las '+hora1+':'+hora2, 40, 25); // Coloca este texto debajo del título
-      },
-    });
-  
-    // Restablece el tamaño de la fuente para el resto del documento si es necesario
-    doc.setFontSize(12);
-  
-    // Guarda el PDF generado
-    doc.save(`reporte-incidencias-${fecha}.pdf`);
-  }
   
   createPDF() {
     try {
@@ -265,9 +223,9 @@ export class GestionarIncidenciasPage implements OnInit {
         const blob = new Blob([buffer], { type: 'application/pdf' });
         const fileName = 'reporte_incidencia.pdf';
 
-        File.writeFile(File.dataDirectory, fileName, blob, { replace: true })
+        File.writeFile(File.dataDirectory, 'reporte_incidencia.pdf', blob, { replace: true })
           .then(fileEntry => {
-            FileOpener.open(File.dataDirectory + fileName, 'application/pdf');
+            FileOpener.open(File.dataDirectory + 'reporte_incidencia.pdf', 'application/pdf');
           })
           .catch(err => {
             console.error('Error writing file', err);
@@ -278,30 +236,51 @@ export class GestionarIncidenciasPage implements OnInit {
     }
   }
 
-  getPdfDefinition(){
 
+  getPdfDefinition(){
+    const fecha = moment().tz('America/Santiago').format();
+    const fecha2 = fecha.toString().split('T')[0]; 
+    const hora=  fecha.toString().split('T')[1]; 
+    const hora1= hora.toString().split(':')[0];
+    const hora2= hora.toString().split(':')[1];  
+    const incidencias = this.incidencias;
+    this.filas = []; // Asegúrate de inicializar this.filas como un arreglo vacío
+  
+  incidencias.forEach(incidencia => {
+    // Suponiendo que 'incidencia' es un objeto con las propiedades que quieres mostrar
+    const fila = [
+      incidencia.id_incidencia, 
+      incidencia.sede, 
+      incidencia.direccion, 
+      incidencia.fecha, 
+      incidencia.guardia, 
+      incidencia.detalle_incidencia
+    ];
+    this.filas.push(fila); // Agrega cada 'fila' al arreglo 'this.filas'
+  });
+  // Uso de la función
+ 
+  const body= [
+      ['ID', 'Sede', 'Direccion', 'Fecha', 'Guardia', 'Detalle'],
+      ...this.filas      
+    ]
+  console.log(body)
     var dd = {
       content: [
         {
-          text: 'This is a header, using header style',
+          text: 'Reporte Incidencias',
           style: 'header'
         },
-        'Lociunt triari naturam.\n\n',
         {
-          text: 'Subheader 1 - using subheader style',
+          text: 'Generado el ' +fecha2+ ' a las ' +hora1+':'+hora2,
           style: 'subheader'
         },
-        'Lorem',
         {
-          text: 'Subheader 2 - using subheader style',
-          style: 'subheader'
+          style: 'tableExample',
+          table: {
+            body: body, 
+          }, 
         },
-      
-        'ideo.\n\n',
-        {
-          text: 'p  the same properties',
-          style: ['quote', 'small']
-        }
       ],
       styles: {
         header: {
@@ -315,9 +294,10 @@ export class GestionarIncidenciasPage implements OnInit {
         quote: {
           italics: true
         },
-        small: {
-          fontSize: 8
-        }
+        tableExample: {
+          margin: 5
+        },
+       
       }
 
     }
