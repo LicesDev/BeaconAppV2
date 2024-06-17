@@ -207,32 +207,38 @@ export class GestionarIncidenciasPage implements OnInit {
     }
   }
   
-  createPDF() {
+  async createPDF() {
     try {
-      const docDefinition = this.getPdfDefinition();
+      const docDefinition = await this.getPdfDefinition(); // Asegúrate de esperar la definición del documento
       this.pdfObj = pdfMake.createPdf(docDefinition);
-      this.downloadPdf();
+      await this.downloadPdf(); // Espera a que se complete la descarga
     } catch (error) {
       console.error('Error creating PDF', error);
     }
   }
 
   async downloadPdf() {
+    const fecha = moment().tz('America/Santiago').format();
+    const fecha2 = fecha.toString().split('T')[0]; 
+    const hora=  fecha.toString().split('T')[1]; 
+    const hora1= hora.toString().split(':')[0];
+    const hora2= hora.toString().split(':')[1];  
+    const fileName = 'reporte_incidencia_' + fecha2 +'_'+hora1+'-'+hora2+'.pdf';
     if (this.platform.is('cordova')) {
-      this.pdfObj.getBuffer((buffer: any) => {
+      this.pdfObj.getBuffer(async (buffer: any) => {
         const blob = new Blob([buffer], { type: 'application/pdf' });
-        const fileName = 'reporte_incidencia.pdf';
-
-        File.writeFile(File.dataDirectory, 'reporte_incidencia.pdf', blob, { replace: true })
-          .then(fileEntry => {
-            FileOpener.open(File.dataDirectory + 'reporte_incidencia.pdf', 'application/pdf');
-          })
-          .catch(err => {
-            console.error('Error writing file', err);
-          });
+        const filePath = File.dataDirectory + fileName;
+  
+        try {
+          await File.writeFile(File.dataDirectory, fileName, blob, { replace: true });
+          console.log('File written:', filePath); // Esto te mostrará la ruta exacta del archivo guardado
+          await FileOpener.open(filePath, 'application/pdf');
+        } catch (err) {
+          console.error('Error writing file', err);
+        }
       });
     } else {
-      this.pdfObj.download();
+      this.pdfObj.download(fileName); // Asegúrate de pasar el nombre del archivo aquí también
     }
   }
 
