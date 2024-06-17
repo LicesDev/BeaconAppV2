@@ -44,25 +44,25 @@
  <!--Carta-->
  <div class="contenedor">
   <ion-list class="fondo">
-    <ng-container *ngIf="incidencias.length; else noTurnos">
-    <ion-item *ngFor="let incidencia of incidencias; let i = index" lines="none" detail="false" button (click)="incidencia.expanded = !incidencia.expanded" >
+    <ng-container *ngIf="asistencias.length; else noTurnos">
+    <ion-item *ngFor="let asistencia of asistencias; let i = index" lines="none" detail="false" button (click)="asistencia.expanded = !asistencia.expanded" >
       <ion-card >
     
           <div class="card-content">
             <ion-card-header>
-              <ion-card-title>Nro Incidencia: {{incidencia.id_incidencia}}</ion-card-title>          
+              <ion-card-title>Nro asistencia: {{asistencia.id_asistencia}}</ion-card-title>          
             </ion-card-header>
-            <p class="seccion">Fecha: {{incidencia.fecha}}</p>
-            <p class="seccion">Sede: {{incidencia.sede}}</p>
-            <p class="seccion">Dirección: {{incidencia.direccion}}</p>
+            <p class="seccion">Fecha: {{asistencia.fecha}}</p>
+            <p class="seccion">Sede: {{asistencia.sede}}</p>
+            <p class="seccion">Dirección: {{asistencia.direccion}}</p>
             <ion-card-content>
 
-              <ion-img *ngIf="!incidencia.expanded" src="./../../../assets/img/flecha.png" class="flecha"></ion-img>
+              <ion-img *ngIf="!asistencia.expanded" src="./../../../assets/img/flecha.png" class="flecha"></ion-img>
 
-              <div *ngIf="incidencia.expanded" >
-                <p class="seccion">Guardia que reporto: {{incidencia.guardia}}</p>
-                <p class="seccion">Detalle de la Incidencia: <br> {{incidencia.detalle_incidencia}}</p>
-                <ion-img *ngIf="incidencia.expanded" src="./../../../assets/img/flecha2.png" class="flecha"></ion-img>
+              <div *ngIf="asistencia.expanded" >
+                <p class="seccion">Guardia que reporto: {{asistencia.guardia}}</p>
+                <p class="seccion">Detalle de la asistencia: <br> {{asistencia.detalle_asistencia}}</p>
+                <ion-img *ngIf="asistencia.expanded" src="./../../../assets/img/flecha2.png" class="flecha"></ion-img>
               </div>
 
             </ion-card-content>
@@ -78,13 +78,14 @@
     <ion-item>
       <ion-card>
         <ion-card-header>
-          <p style="margin: auto;">No hay incidencias</p>
+          <p style="margin: auto;">No hay asistencias</p>
         </ion-card-header>
       </ion-card>
     </ion-item>
   </ng-template>
   </ion-list>
 </div>
-
+<div class="tope"></div>
+<div class="boton"><button class="botonGenerar" id="crear" (click)="confirmarCrear()">Generar Reporte</button></div>
 
 </ion-content>

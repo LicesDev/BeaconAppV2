@@ -6,7 +6,11 @@ import { AuthService } from '../../../servicio/auth.service';
 import { ModalController } from '@ionic/angular';
 import { ViewChild } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
-
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import Swal from 'sweetalert2';
+import * as moment from 'moment-timezone';
+import { Filesystem, Directory } from '@capacitor/filesystem';
 
 @Component({
   selector: 'app-gestionar-incidencias',
@@ -175,4 +179,66 @@ export class GestionarIncidenciasPage implements OnInit {
     document.body.appendChild(toast);
     return toast.present();
   }
+  async confirmarCrear() {
+    const result = await Swal.fire({
+      title: 'Confirmación',
+      text: '¿Estás seguro desea generar este informe?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, generar',
+      cancelButtonText: 'No, cancelar',
+      heightAuto: false,
+      confirmButtonColor: 'rgb(57, 88, 134)',
+    });
+
+    if (result.isConfirmed) {
+      await this.generatePDF(this.incidencias);
+    }
+  }
+  generatePDF(incidencias: any[]) {
+    const doc = new jsPDF();
+  
+    // Asegúrate de tener el logo como una cadena base64 o un URL
+    const logo = '../../../assets/img/Logo2.png'; // Reemplaza esto con tu imagen codificada en base64
+  
+    // Define las columnas y sus títulos
+    const columns = [
+      { header: 'ID', dataKey: 'id_incidencia' },
+      { header: 'Sede', dataKey: 'sede' },
+      { header: 'Direccion', dataKey: 'direccion' },
+      { header: 'Fecha', dataKey: 'fecha' },
+      { header: 'Guardia', dataKey: 'guardia' },
+      { header: 'Detalle', dataKey: 'detalle_incidencia' },
+      // Agrega más columnas según necesites
+    ];
+  
+    const fecha = moment().tz('America/Santiago').format();
+    const fecha2 = fecha.toString().split('T')[0]; 
+    const hora=  fecha.toString().split('T')[1]; 
+  const hora1= hora.toString().split(':')[0];
+  const hora2= hora.toString().split(':')[1];  
+    // Genera la tabla con los datos de incidencias
+    autoTable(doc, {
+      startY: 40, // Ajusta este valor según sea necesario para bajar la tabla
+      columns: columns,
+      body: incidencias,
+      didDrawPage: (data) => {
+        // Agrega el título y el logo
+        doc.addImage(logo, 'PNG', 15, 10, 20, 20); // Ajusta las coordenadas y el tamaño según sea necesario
+        doc.text('Reporte de Incidencias', 40, 15); // Ajusta las coordenadas según sea necesario
+  
+        // Cambia el tamaño de la fuente para el texto "Generado el:"
+        doc.setFontSize(10); // Cambia el tamaño de la fuente a uno más pequeño
+        doc.text('Generado el ' + fecha2 + ' a las '+hora1+':'+hora2, 40, 25); // Coloca este texto debajo del título
+      },
+    });
+  
+    // Restablece el tamaño de la fuente para el resto del documento si es necesario
+    doc.setFontSize(12);
+  
+    // Guarda el PDF generado
+    doc.save(`reporte-incidencias-${fecha}.pdf`);
+  }
+  
+  
 }
