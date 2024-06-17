@@ -1,16 +1,23 @@
+import { catchError } from 'rxjs/operators';
 
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../servicio/auth.service';
-import { ModalController } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { ViewChild } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
-import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import Swal from 'sweetalert2';
 import * as moment from 'moment-timezone';
-import { Filesystem, Directory } from '@capacitor/filesystem';
+import { File } from '@awesome-cordova-plugins/file';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener';
+
+import * as pdfMake from "pdfmake/build/pdfmake";
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+
+(<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
+
+
 
 @Component({
   selector: 'app-gestionar-incidencias',
@@ -27,13 +34,15 @@ export class GestionarIncidenciasPage implements OnInit {
   @ViewChild('modal') modal: any;
   @ViewChild('modalSede') modalSede: any;
   sedes: any[] = [];
+  pdfObj:any;
 
   constructor(
     private router: Router,
     private http: HttpClient,
     private authService: AuthService,
     private cd: ChangeDetectorRef,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private platform: Platform
   ) {}
 
   ngOnInit() {
@@ -192,7 +201,7 @@ export class GestionarIncidenciasPage implements OnInit {
     });
 
     if (result.isConfirmed) {
-      await this.generatePDF(this.incidencias);
+      this.createPDF();
     }
   }
   generatePDF(incidencias: any[]) {
@@ -240,5 +249,79 @@ export class GestionarIncidenciasPage implements OnInit {
     doc.save(`reporte-incidencias-${fecha}.pdf`);
   }
   
+  createPDF() {
+    try {
+      const docDefinition = this.getPdfDefinition();
+      this.pdfObj = pdfMake.createPdf(docDefinition);
+      this.downloadPdf();
+    } catch (error) {
+      console.error('Error creating PDF', error);
+    }
+  }
+
+  async downloadPdf() {
+    if (this.platform.is('cordova')) {
+      this.pdfObj.getBuffer((buffer: any) => {
+        const blob = new Blob([buffer], { type: 'application/pdf' });
+        const fileName = 'reporte_incidencia.pdf';
+
+        File.writeFile(File.dataDirectory, fileName, blob, { replace: true })
+          .then(fileEntry => {
+            FileOpener.open(File.dataDirectory + fileName, 'application/pdf');
+          })
+          .catch(err => {
+            console.error('Error writing file', err);
+          });
+      });
+    } else {
+      this.pdfObj.download();
+    }
+  }
+
+  getPdfDefinition(){
+
+    var dd = {
+      content: [
+        {
+          text: 'This is a header, using header style',
+          style: 'header'
+        },
+        'Lociunt triari naturam.\n\n',
+        {
+          text: 'Subheader 1 - using subheader style',
+          style: 'subheader'
+        },
+        'Lorem',
+        {
+          text: 'Subheader 2 - using subheader style',
+          style: 'subheader'
+        },
+      
+        'ideo.\n\n',
+        {
+          text: 'p  the same properties',
+          style: ['quote', 'small']
+        }
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true
+        },
+        subheader: {
+          fontSize: 15,
+          bold: true
+        },
+        quote: {
+          italics: true
+        },
+        small: {
+          fontSize: 8
+        }
+      }
+
+    }
+    return dd;
+  }
   
 }
