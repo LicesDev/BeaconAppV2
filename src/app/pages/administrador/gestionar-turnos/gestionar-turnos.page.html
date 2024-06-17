@@ -114,16 +114,16 @@
             </ion-select>
           </ion-item>
           <ion-item>
-            <ion-input #fechaInputC  label="Fecha: (YYYY-MM-DD) "  labelPlacement="floating"value=""></ion-input>
+            <ion-input #fechaInputC  label="Fecha: (YYYY-MM-DD) "  labelPlacement="floating"value="" [counter]="true" maxlength="10"></ion-input>
           </ion-item>
           <ion-item>
             <ion-input #ctdGuardiasInputC  label="Cantidad de Guardias: "  labelPlacement="floating" type="number"  value=""></ion-input>
           </ion-item>
           <ion-item>
-            <ion-input #horaIniInputC  label="Horario de inicio: (HH:MM)"  labelPlacement="floating" value=""></ion-input>
+            <ion-input #horaIniInputC  label="Horario de inicio: (HH:MM)"  labelPlacement="floating" value="" [counter]="true" maxlength="5"></ion-input>
           </ion-item>
           <ion-item>
-            <ion-input #horaFinInputC label="Horario de termino: (HH:MM)" labelPlacement="floating" value=""></ion-input>
+            <ion-input #horaFinInputC label="Horario de termino: (HH:MM)" labelPlacement="floating" value="" [counter]="true" maxlength="5"></ion-input>
           </ion-item>
           <ion-item>
             <ion-input #remuInputC  label="Remuneración: " type="number" labelPlacement="floating" value=""></ion-input>

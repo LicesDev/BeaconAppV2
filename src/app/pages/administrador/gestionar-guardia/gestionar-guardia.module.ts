@@ -9,13 +9,15 @@ import { GestionarGuardiaPageRoutingModule } from './gestionar-guardia-routing.m
 import { GestionarGuardiaPage } from './gestionar-guardia.page';
 import { ModuloNavbarModule } from 'src/app/modulos/modulo-navbar/modulo-navbar.module';
 
+
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
     GestionarGuardiaPageRoutingModule,
-    ModuloNavbarModule
+    ModuloNavbarModule,
+    
   ],
   declarations: [GestionarGuardiaPage]
 })

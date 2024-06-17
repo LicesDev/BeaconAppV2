@@ -19,7 +19,7 @@ import * as CryptoJS from 'crypto-js';
 export class LoginPage implements OnInit {
   usuario: string = '';
   pass: string = '';
-
+  showPassword = false;
   constructor(
     private router: Router,
     private toastCtrl: ToastController,
@@ -30,7 +30,9 @@ export class LoginPage implements OnInit {
   ngOnInit() {
     this.solicitarPermisos();
   }
-
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+  }
   async solicitarPermisos() {
     // Solicitar permiso para acceder a la ubicación
     const permisoUbicacion = await Geolocation.requestPermissions();

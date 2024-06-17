@@ -11,6 +11,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import Swal from 'sweetalert2';
 import * as CryptoJS from 'crypto-js';
 
+
 @Component({
   selector: 'app-gestionar-guardia',
   templateUrl: './gestionar-guardia.page.html',
@@ -20,6 +21,7 @@ export class GestionarGuardiaPage implements OnInit {
   guardias: any[] = [];
   comunas: any[] = [];
   comu: any;
+  
   @ViewChild('comunaSelect') comunaSelect!: IonSelect;
   @ViewChild('pNombreInput') pNombreInput!: IonInput;
   @ViewChild('sNombreInput') sNombreInput!: IonInput;
@@ -43,6 +45,10 @@ export class GestionarGuardiaPage implements OnInit {
   @ViewChild('correoInputC') correoInputC!: IonInput;
   @ViewChild('telefonoInputC') telefonoInputC!: IonInput;
   @ViewChild('direccionInputC') direccionInputC!: IonInput;
+  inputModelpNombre = '';
+  inputModelsNombre = '';
+  inputModelpApellido = '';
+  inputModelsApellido = '';
 
   constructor(
     private router: Router,
@@ -56,6 +62,24 @@ export class GestionarGuardiaPage implements OnInit {
     this.getGuardias();
   }
 
+  onInput(ev:any , input:any) {
+    const value = ev.target!.value;
+
+    // Removes non alphanumeric characters
+    const filteredValue = value.replace(/[^a-zA-Z]+/g, '');
+
+  if (input == 1) {
+    this.pNombreInputC.value = this.inputModelpNombre = filteredValue;
+  } if (input == 2) {
+    this.sNombreInputC.value = this.inputModelsNombre = filteredValue;
+  } if (input == 3) {
+    this.pApellidoInputC.value = this.inputModelpApellido = filteredValue;
+  } if (input == 4) {
+    this.sApellidoInputC.value = this.inputModelsApellido = filteredValue;
+  } 
+    
+    
+  }
   getGuardias() {
     this.http
       .get(`https://osolices.pythonanywhere.com/guardia/`)

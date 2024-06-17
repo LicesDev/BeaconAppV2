@@ -101,28 +101,31 @@
         </ion-toolbar>
         <ion-list>
           <ion-item>
-            <ion-input #pNombreInputC  label="Primer nombre: "  labelPlacement="floating"value=""></ion-input>
+            <ion-input #pNombreInputC  label="Primer nombre: "   labelPlacement="floating" (ionInput)="onInput($event,1)"  [value]="inputModelpNombre"></ion-input>
           </ion-item>
           <ion-item>    
-            <ion-input #sNombreInputC  label="Segundo nombre: "  labelPlacement="floating"value=""></ion-input>
+            <ion-input #sNombreInputC  label="Segundo nombre: "  labelPlacement="floating" (ionInput)="onInput($event,2)" [value]="inputModelsNombre"></ion-input>
           </ion-item>
           <ion-item>
-            <ion-input #pApellidoInputC  label="Primer apellido: "  labelPlacement="floating"value=""></ion-input>
+            <ion-input #pApellidoInputC  label="Primer apellido: "  labelPlacement="floating" (ionInput)="onInput($event,3)" [value]="inputModelpApellido"></ion-input>
           </ion-item>
           <ion-item>
-            <ion-input #sApellidoInputC  label="Segundo apellido: "  labelPlacement="floating"value=""></ion-input>
+            <ion-input #sApellidoInputC  label="Segundo apellido: "  labelPlacement="floating" (ionInput)="onInput($event,4)" [value]="inputModelsApellido"></ion-input>
           </ion-item>
           <ion-item>
-            <ion-input #rutInputC  label="Rut: (9999999-9)"  labelPlacement="floating" value=""></ion-input>
+            <ion-input #rutInputC  label="Rut: (9999999-9)"  labelPlacement="floating" value="" [counter]="true" maxlength="10"></ion-input>
           </ion-item>
           <ion-item>
-            <ion-input #fechaNacInputC label="Fecha de Nacimiento: (YYYY-MM-DD)" labelPlacement="floating" value=""></ion-input>
+            <ion-input #fechaNacInputC label="Fecha de Nacimiento: (YYYY-MM-DD)" labelPlacement="floating" value="" [counter]="true" maxlength="10"></ion-input>
           </ion-item>
           <ion-item>
-            <ion-input #correoInputC  label="Correo: "  labelPlacement="floating" value=""></ion-input>
+            <ion-input #correoInputC  label="Correo: "  labelPlacement="floating"   helperText="Ingresa un correo valido"
+            errorText="Correo Invalido"
+            ngModel
+            email value=""></ion-input>
           </ion-item>
           <ion-item>
-            <ion-input #telefonoInputC  label="Telefono: (900000000) "  labelPlacement="floating" type="number"  value=""></ion-input>
+            <ion-input #telefonoInputC  label="Telefono: (900000000) "  labelPlacement="floating" type="number" [counter]="true" maxlength="9" value=""></ion-input>
           </ion-item>
           <ion-item>
             <ion-input #direccionInputC  label="Dirección: "  labelPlacement="floating" value=""></ion-input>

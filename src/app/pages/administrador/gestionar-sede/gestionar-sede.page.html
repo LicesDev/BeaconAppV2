@@ -80,13 +80,16 @@
         </ion-toolbar>
         <ion-list>
           <ion-item>
-            <ion-input #pNombreInputC  label="Nombre sede: "  labelPlacement="floating"value=""></ion-input>
+            <ion-input #pNombreInputC  label="Nombre sede: "  labelPlacement="floating" (ionInput)="onInput($event)"  [value]="inputModelpNombre"></ion-input>
           </ion-item>
           <ion-item>
-            <ion-input #correoInputC  label="Correo: "  labelPlacement="floating" value=""></ion-input>
+            <ion-input #correoInputC  label="Correo: "  labelPlacement="floating"  helperText="Ingresa un correo valido"
+            errorText="Correo Invalido"
+            ngModel
+            email value=""></ion-input>
           </ion-item>
           <ion-item>
-            <ion-input #telefonoInputC  label="Telefono: (900000000) "  labelPlacement="floating" type="number"  value=""></ion-input>
+            <ion-input #telefonoInputC  label="Telefono: (900000000) "  labelPlacement="floating" type="number" [counter]="true" maxlength="9"  value=""></ion-input>
           </ion-item>
           <ion-item>
             <ion-input #direccionInputC  label="Dirección: "  labelPlacement="floating" value=""></ion-input>

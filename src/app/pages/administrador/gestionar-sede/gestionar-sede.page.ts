@@ -33,6 +33,8 @@ export class GestionarSedePage implements OnInit {
   @ViewChild('telefonoInputC') telefonoInputC!: IonInput;
   @ViewChild('direccionInputC') direccionInputC!: IonInput;
 
+  inputModelpNombre = '';
+
   constructor(
     private router: Router,
     private http: HttpClient,
@@ -43,6 +45,15 @@ export class GestionarSedePage implements OnInit {
 
   ngOnInit() {
     this.getSedes();
+  }
+ onInput(ev:any ) {
+    const value = ev.target!.value;
+
+    // Removes non alphanumeric characters
+    const filteredValue = value.replace(/[^a-zA-Z0-9]+/g, '');
+
+
+    this.pNombreInputC.value = this.inputModelpNombre = filteredValue;
   }
 
   getSedes() {

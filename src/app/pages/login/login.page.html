@@ -17,7 +17,13 @@
 
 
 
-        <ion-input class="inputs" label="Contraseña" labelPlacement="floating" [(ngModel)]="pass" type="password"></ion-input>
+        <ion-input class="inputs" label="Contraseña" labelPlacement="floating" [(ngModel)]="pass" [type]="showPassword ? 'text' : 'password'">
+          <ion-icon slot="start" name="lock-closed" aria-hidden="true"></ion-icon>
+          <ion-button class="eye" fill="clear" slot="end" aria-label="Show/hide" (click)="togglePassword()">
+            <ion-icon class="eye" slot="icon-only" name="eye" aria-hidden="true"></ion-icon>
+          </ion-button>
+        </ion-input>
+
       <div class="boton">
         <ion-button class="btnentrar" expand="full" (click)="login()">Entrar</ion-button>
       </div>
