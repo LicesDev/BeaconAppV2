@@ -69,6 +69,7 @@ export class DashPage implements OnInit {
                         asignacion.direccion = direccion;
                         asignacion.foto = foto;
                         this.asignaciones.push(asignacion);
+                        
                       });
                   
                 }

@@ -127,6 +127,7 @@ CREATE TABLE IF NOT EXISTS `SEDE` (
   `correo` VARCHAR(200) NOT NULL,
   `foto` VARCHAR(300),
   `id_comuna` INT NOT NULL,
+
   PRIMARY KEY (`id_sede`),
   INDEX `fk_SEDE_COMUNA1_idx` (`id_comuna` ASC) VISIBLE,
   CONSTRAINT `fk_SEDE_COMUNA1`

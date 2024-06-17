@@ -19,6 +19,8 @@ import { EmailComposer, OpenOptions } from 'capacitor-email-composer';
 import { ModalController } from '@ionic/angular';
 import { ViewChild } from '@angular/core';
 import { IonSelect, IonTextarea } from '@ionic/angular';
+import emailjs, { type EmailJSResponseStatus } from '@emailjs/browser';
+import * as moment from 'moment-timezone';
 
 @Component({
   selector: 'app-asistencia',
@@ -26,12 +28,16 @@ import { IonSelect, IonTextarea } from '@ionic/angular';
   styleUrls: ['./asistencia.page.scss'],
 })
 export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
+  valorDescuento:any;
+  descuento:any;
+  nombre: any;
   usuario: any = {};
   asistencia: any[] = [];
   asignacion: any;
   lat?: number;
   lng?: number;
   timestamp?: number;
+  cercania= false;
   botonTurnoHabilitado = false;
   botonColacionHabilitado = false;
   botonPermanenciaHabilitado = false;
@@ -58,9 +64,12 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
+    
+    emailjs.init('4PuoT7FOO-_P4NBIr');
     this.route.queryParams.subscribe((params) => {
       this.asignacion = params;
     });
+    
     await Preferences.set({ key: 'turnoIniciado', value: 'false' });
     await this.obtenerUbicacionGuardia();
 
@@ -132,6 +141,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
   async ngAfterViewInit() {
     setTimeout(() => {
       this.detectDevice();
+      this.detectCercania();
     }, 4000);
     // Recuperar el estado de los botones del almacenamiento local
     const { value: botonBuscarVisible } = await Preferences.get({
@@ -378,6 +388,82 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  async detectCercania() {
+    const sedeLat = -33.5984757;
+    const sedeLng = -70.5781949;
+    const radio = 0.1; // Define el radio en kilómetros
+  
+    try {
+      const options: PositionOptions = {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 10000,
+      };
+      const coordinates = await Geolocation.getCurrentPosition(options);
+      const guardiaLat = coordinates.coords.latitude;
+      const guardiaLng = coordinates.coords.longitude;
+  
+      // Calcula la distancia usando la fórmula de Haversine
+      const R = 6371; // Radio de la Tierra en kilómetros
+      const dLat = this.degreesToRadians(guardiaLat - sedeLat);
+      const dLng = this.degreesToRadians(guardiaLng - sedeLng);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(this.degreesToRadians(sedeLat)) * Math.cos(this.degreesToRadians(guardiaLat)) *
+        Math.sin(dLng / 2) * Math.sin(dLng / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distancia = R * c;
+  
+      if (distancia <= radio) {
+        console.log('El guardia está cerca del punto.');
+        this.toast('Baliza detectada')
+        this.cercania=true;
+      } else {
+        this.toast('Estas lejos de la baliza')
+        console.log('El guardia no está cerca del punto.');
+      }
+    } catch (error) {
+      console.error('Error al obtener la ubicación del guardia:', error);
+    }
+  }
+  
+  // Función auxiliar para convertir grados a radianes
+  degreesToRadians(degrees: number) {
+    return degrees * (Math.PI / 180);
+  }
+  async calcularDescuento(){
+    console.log('entre')
+    console.log(this.asignacion.hora_inicio)
+    // Obtiene la fecha y hora actual en el formato correcto
+    const ahora = moment().tz('America/Santiago');
+  
+    // Parsea la hora de inicio de la asignación
+    const horaAsignacion = moment(this.asignacion.hora_inicio, 'HH:mm');
+  
+    // Calcula la diferencia en minutos
+    const diferencia = ahora.diff(horaAsignacion, 'minutes');
+  
+    console.log(`La diferencia en minutos es: ${diferencia}`);
+if (diferencia<=0) {
+  this.descuento=1;
+}if (diferencia>=15) {
+  this.descuento=2;
+  this.toast('Atraso Leve')
+}if (diferencia>=30) {
+  this.descuento=3;
+  this.toast('Atraso Grave')
+}
+this.http
+.get(`https://osolices.pythonanywhere.com/descuento/${this.descuento}/`)
+.subscribe(
+  (descuento: any) => {
+    console.log(descuento)
+    this.valorDescuento = descuento.valor_dcto;
+    console.log(this.valorDescuento)
+  });
+
+  }
+
   async confirmarComenzarTurno() {
     const result = await Swal.fire({
       title: 'Confirmación',
@@ -393,6 +479,20 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     if (result.isConfirmed) {
       await this.comenzarTurno();
     }
+  }
+  enviarCorreo(to_name: string, from_name: string, message: string) {
+    let templateParams = {
+      to_name: to_name,
+      from_name: from_name,
+      message: message,
+    };
+
+    emailjs.send('service_v7c3lup', 'template_piu6cqs', templateParams)
+      .then(response => {
+        console.log('Correo enviado!', response.status, response.text);
+      }, error => {
+        console.log('Falló el envío del correo:', error);
+      });
   }
   async comenzarTurno() {
     console.log('Turno Comenzado');
@@ -428,6 +528,8 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
           value: '',
         });
       }
+      const userData = window.localStorage.getItem('userData');
+
       this.cd.detectChanges(); // Detectar los cambios
       // Habilitar botones de colación e incidencia
       this.botonColacionHabilitado = true;
@@ -444,7 +546,16 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
       // Obtener la hora actual y calcular la hora tope (2 horas en el futuro)
       const now = new Date();
       const endTime = new Date(now.getTime() + 2 * 60 * 60 * 1000); // 2 horas después
-
+      
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        const pNombre = parsedData.p_nombre;
+        const pApellido = parsedData.p_apellido;
+        this.nombre = `${pNombre} ${pApellido}`;
+        
+      }
+      
+      this.enviarCorreo('Daniel Santelices', this.nombre, 'El guardia comenzo su turno en la sede '+this.asignacion.nombre+' el día '+ now +'');
       // Guardar la hora tope en el almacenamiento persistente
       await Preferences.set({
         key: 'endTime',
@@ -459,10 +570,10 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
       const horas = horaActual.getHours().toString().padStart(2, '0');
       const minutos = horaActual.getMinutes().toString().padStart(2, '0');
       const horaFormateada = `${horas}:${minutos}`;
-
+      await this.calcularDescuento();
       // Obtener id_asignacion
       const idAsignacion = this.asignacion?.id_asignacion;
-      const remuneracion = this.asignacion?.remuneracion;
+      const remuneracion = (this.asignacion?.remuneracion * this.valorDescuento) + this.asignacion?.remuneracion;
       // Construir el cuerpo de la solicitud
       const body = {
         hora_ini_1: horaFormateada,
@@ -470,7 +581,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
         hora_ini_2: null,
         hora_fin_2: null,
         remuneracion_final: remuneracion,
-        id_descuento: 1,
+        id_descuento: this.descuento,
         id_asignacion: idAsignacion,
       };
 
@@ -528,11 +639,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  goToDash() {
-    setTimeout(() => {
-      this.router.navigate(['/dashboard-alumnos']);
-    }, 3000);
-  }
+
 
   toast(mensaje: string) {
     const toast = document.createElement('ion-toast');
@@ -670,6 +777,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
       const horaFormateada = `${horas}:${minutos}`;
       asistencia.hora_fin_2 = horaFormateada;
       this.botonIncidenciaHabilitado = false;
+      this.botonColacionHabilitado = false;
       this.cd.detectChanges();
       this.http
         .put(

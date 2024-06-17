@@ -25,7 +25,7 @@
       <ul>
         <li class="mapa">Dirijase a: {{asignacion?.direccion}}</li>
         <li><div id="map" style="width: 100%; height: 150px; border-radius: 2%;"></div> <!-- Cambia 'class' por 'id' -->
-          <app-map [sedeLat]="-33.450435" [sedeLng]="-70.651068"></app-map></li>
+          <app-map [sedeLat]="-33.5984757" [sedeLng]="-70.5781949"></app-map></li>
       </ul>  
     </div>
   </div>
@@ -46,7 +46,7 @@
     </button>
   </div>
   <div class="boton">
-    <button class="botonasistencia" id="incidencia"  (click)="crearIncidencias()">Reportar Incidencia</button>
+    <button class="botonasistencia" id="incidencia" [disabled]="!botonIncidenciaHabilitado" [ngClass]="{'disabled': !botonIncidenciaHabilitado}"  (click)="crearIncidencias()">Reportar Incidencia</button>
   </div>
 
   <ion-modal #modal trigger="incidencia">

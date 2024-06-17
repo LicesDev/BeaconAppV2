@@ -1,46 +1,8 @@
 <ion-content class="fondo">
 
   <app-navbar-admin ></app-navbar-admin>
-  
-  <div class="filtros">
-    <div class="fecha">
-      <button class="btnfiltro" (click)="openModalFecha()" value="currentValue">Fecha: {{currentValue.toString()
-        .split('-')[0]}}- {{currentValue.toString()
-          .split('-')[1]}}</button>
-  
-      <ion-modal #modal [isOpen]="showModal" (didDismiss)="onDidDismissFecha($event)" [keepContentsMounted]="true">
-        <ng-template>
-          <ion-datetime
-            id="datetime"
-            presentation="month-year"
-            (ionChange)="onIonChange($event)"
-            [value]="currentValue"
-          ></ion-datetime>
-          <button class="seleccionar" (click)="modal.dismiss(currentValue, 'confirm')">Seleccionar</button>
-        </ng-template>
-      </ion-modal>
-  
-      
-    </div>
 
-    <div class="fecha">
-      <button class="btnfiltro" (click)="openModalSede()">Sede: {{currentNombreSede}} </button>
 
-<ion-modal class="sede" #modalSede  [isOpen]="showModalSede" (didDismiss)="onDidDismissSede($event)" [keepContentsMounted]="true">
-  <ng-template>
-    <ion-picker>
-      <ion-picker-column [value]="currentValueSede" (ionChange)="onSedeChange($event)">
-        <ion-picker-column-option *ngFor="let sede of sedes; let i = index" value="{{sede.id_sede}}">{{sede.nombre}}</ion-picker-column-option>
-      </ion-picker-column>
-    </ion-picker>
-    <button class="seleccionar" (click)="modalSede.dismiss(currentValueSede, 'confirm')">Seleccionar</button>
-  </ng-template>
-</ion-modal>
-    </div>
-  </div>
-  
-
-  
  <!--Carta-->
  <div class="contenedor">
   <ion-list class="fondo">
@@ -54,14 +16,15 @@
             </ion-card-header>
             <p class="seccion">Fecha: {{asistencia.fecha}}</p>
             <p class="seccion">Sede: {{asistencia.sede}}</p>
-            <p class="seccion">Dirección: {{asistencia.direccion}}</p>
+            <p class="seccion">Guardia: {{asistencia.guardia}}</p>
             <ion-card-content>
 
               <ion-img *ngIf="!asistencia.expanded" src="./../../../assets/img/flecha.png" class="flecha"></ion-img>
 
               <div *ngIf="asistencia.expanded" >
-                <p class="seccion">Guardia que reporto: {{asistencia.guardia}}</p>
-                <p class="seccion">Detalle de la asistencia: <br> {{asistencia.detalle_asistencia}}</p>
+                <p class="seccion">Remuneracion inicial:<br>  {{asistencia.remuneracion_inicial}}</p>
+                <p class="seccion">Porcentaje de descuento: {{asistencia.porc_descuento}}%</p>
+                <p class="seccion">Remuneracion final: <br> {{asistencia.remuneracion_final}}</p>
                 <ion-img *ngIf="asistencia.expanded" src="./../../../assets/img/flecha2.png" class="flecha"></ion-img>
               </div>
 

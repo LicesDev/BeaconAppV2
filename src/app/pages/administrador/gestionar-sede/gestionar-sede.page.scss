@@ -12,8 +12,6 @@ ion-item {
   --background: #f0f3fa !important;
   overflow: initial !important;
 }
-
-
 .ion-activated{
 
   --background-activated: #f0f3fa !important;
@@ -42,11 +40,6 @@ ion-item {
   border: 2px solid #b1c9ef;
 }
 
-ion-item{
-  --min-height:150px;
-  --background: #ffffff !important;
-}
-  
 .lista{
   background: #ffffff;
   font-family: 'Montserrat', sans-serif;
@@ -55,6 +48,7 @@ ion-item{
 
 }
 .datos{
+  margin-bottom: 0px;
   margin-left: 10px;
   color: black;
   font-weight: 400;
@@ -68,6 +62,7 @@ ion-modal {
   --border-radius: 16px;
   --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --z-index: 100;
+  --font-family: 'Montserrat', sans-serif;
 }
 ion-modal ion-item{
   --min-height:0px;
