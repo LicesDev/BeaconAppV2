@@ -44,7 +44,6 @@ ion-item {
 
 ion-item{
   --min-height:150px;
-  --background: #ffffff !important;
 }
   
 .lista{
@@ -55,6 +54,7 @@ ion-item{
 
 }
 .datos{
+  margin-bottom: 0px;
   margin-left: 10px;
   color: black;
   font-weight: 400;

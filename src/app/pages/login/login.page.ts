@@ -9,6 +9,7 @@ import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { Geolocation } from '@capacitor/geolocation';
 import { LocalNotifications } from '@capacitor/local-notifications';
+import * as CryptoJS from 'crypto-js';
 
 @Component({
   selector: 'app-login',
@@ -47,14 +48,17 @@ export class LoginPage implements OnInit {
       return;
     }
 
-    console.log(`Usuario: ${this.usuario}`);
-    console.log(`Contraseña: ${this.pass}`);
+    // Hashear la contraseña ingresada por el usuario
+    const inputHashedPassword = CryptoJS.SHA256(this.pass).toString();
 
+    console.log(`Usuario: ${this.usuario}`);
+    console.log(`Contraseña hasheada: ${inputHashedPassword}`);
+  
     // Autenticación con el servidor
     this.http
       .post('https://osolices.pythonanywhere.com/login/', {
         nombre_usuario: this.usuario,
-        contrasena: this.pass,
+        contrasena: inputHashedPassword, // Enviar la contraseña hasheada
       })
       .pipe(
         catchError((error) => {
@@ -68,10 +72,9 @@ export class LoginPage implements OnInit {
       .subscribe(async (resp: any) => {
         if (resp) {
           // Almacenar los datos del usuario en el almacenamiento local
-          // Almacenar los datos del usuario en el almacenamiento local
           this.authService.login(resp.data); // Utiliza el método de inicio de sesión del servicio
           console.log(resp);
-
+  
           // Redirigir al usuario a la página correspondiente
           if (resp.perfil === 'guardia') {
             console.log('Redirigiendo a /dashboard-guardia');
@@ -85,6 +88,7 @@ export class LoginPage implements OnInit {
         }
       });
   }
+  
 
 
   toast(mensaje: string) {

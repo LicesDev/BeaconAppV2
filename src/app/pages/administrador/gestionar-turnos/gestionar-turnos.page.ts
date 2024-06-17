@@ -16,10 +16,12 @@ import Swal from 'sweetalert2';
   styleUrls: ['./gestionar-turnos.page.scss'],
 })
 export class GestionarTurnosPage implements OnInit {
+  asignaciones: any[] = [];
   turnos: any[] = [];
   sedes: any[] = [];
   sede_new: any;
 
+  @ViewChild('asignacionSelect') asignacionSelect!: IonSelect;
   @ViewChild('sedeSelect') sedeSelect!: IonSelect;
   @ViewChild('fechaInput') fechaInput!: IonInput;
   @ViewChild('ctdGuardiasInput') ctdGuardiasInput!: IonInput;
@@ -254,6 +256,58 @@ toast(mensaje: string) {
 
   document.body.appendChild(toast);
   return toast.present();
+}
+
+obtenerAsignaciones(id_turno:any){
+  this.asignaciones = [];
+  this.http.get(`https://osolices.pythonanywhere.com/asignacionturno/${id_turno}/`).subscribe((asignacion: any) => {
+    console.log(asignacion);
+    this.http.get(`https://osolices.pythonanywhere.com/guardia/${asignacion.rut_guarida}/`).subscribe((guardia: any) => {
+      console.log(guardia);
+
+      asignacion.nombre = guardia.p_nombre + guardia.p_apellido;
+
+        this.asignaciones.push(asignacion);
+        console.log(this.asignaciones)
+      });
+    });
+}
+
+async confirmarEliminarAsignacion(){
+  const result = await Swal.fire({
+    title: 'Confirmación',
+    text: '¿Estás seguro desea crear este turno?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, crear',
+    cancelButtonText: 'No, cancelar',
+    heightAuto: false,
+    confirmButtonColor: 'rgb(57, 88, 134)',
+  });
+
+  if (result.isConfirmed) {
+    await this.eliminarAsignacion();
+  }
+}
+
+eliminarAsignacion(){
+  const asignacion = this.asignacionSelect.value ? this.asignacionSelect.value.id_asignacion : this.asignacionSelect.value;
+
+  this.http.delete(`https://osolices.pythonanywhere.com/asignacionturno/${asignacion}/`)
+  .subscribe(
+    response => {
+      console.log(response);
+      this.toast('Asignacion eliminada exitosamente');
+      this.turnos= [];
+      this.getTurnos();
+      this.modalController.dismiss();
+    },
+    error => {
+      console.error(error);
+      this.toast('Error al eliminar');
+    }
+  );
+
 }
 
 

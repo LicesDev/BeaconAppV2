@@ -246,27 +246,6 @@ CREATE TABLE IF NOT EXISTS `INCIDENCIA` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `UBICACION_GUARDIA` (
-  `id_ubicacion` INT NOT NULL AUTO_INCREMENT,
-  `rut_guarida` VARCHAR(12) NOT NULL,
-  `id_turno` INT NOT NULL,
-  `fecha_hora` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `latitud` DECIMAL(9,6) NOT NULL,
-  `longitud` DECIMAL(9,6) NOT NULL,
-  PRIMARY KEY (`id_ubicacion`),
-  INDEX `fk_UBICACION_GUARDIA_GUARDIA1_idx` (`rut_guarida` ASC) VISIBLE,
-  INDEX `fk_UBICACION_GUARDIA_TURNO1_idx` (`id_turno` ASC) VISIBLE,
-  CONSTRAINT `fk_UBICACION_GUARDIA_GUARDIA1`
-    FOREIGN KEY (`rut_guarida`)
-    REFERENCES `GUARDIA` (`rut_guarida`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_UBICACION_GUARDIA_TURNO1`
-    FOREIGN KEY (`id_turno`)
-    REFERENCES `TURNO` (`id_turno`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
@@ -346,6 +325,13 @@ INSERT INTO TURNO (id_turno, fecha, horario_inicio, hora_fin, remuneracion, ctd_
 INSERT INTO TURNO (id_turno, fecha, horario_inicio, hora_fin, remuneracion, ctd_guardias, id_sede) VALUES (18,'2024-06-14', '18:00', '20:00', 60000, 5, 6);
 INSERT INTO TURNO (id_turno, fecha, horario_inicio, hora_fin, remuneracion, ctd_guardias, id_sede) VALUES (19,'2024-06-14', '20:00', '22:00', 60000, 5, 6);
 INSERT INTO TURNO (id_turno, fecha, horario_inicio, hora_fin, remuneracion, ctd_guardias, id_sede) VALUES (20,'2024-06-14', '20:00', '22:00', 60000, 5, 6);
+INSERT INTO TURNO (id_turno, fecha, horario_inicio, hora_fin, remuneracion, ctd_guardias, id_sede) VALUES (21,'2024-06-17', '20:00', '22:00', 60000, 5, 6);
+INSERT INTO TURNO (id_turno, fecha, horario_inicio, hora_fin, remuneracion, ctd_guardias, id_sede) VALUES (22,'2024-06-17', '14:00', '16:00', 60000, 5, 4);
+INSERT INTO TURNO (id_turno, fecha, horario_inicio, hora_fin, remuneracion, ctd_guardias, id_sede) VALUES (23,'2024-06-17', '16:00', '18:00', 60000, 5, 5);
+INSERT INTO TURNO (id_turno, fecha, horario_inicio, hora_fin, remuneracion, ctd_guardias, id_sede) VALUES (24,'2024-06-17', '18:00', '20:00', 60000, 5, 6);
+INSERT INTO TURNO (id_turno, fecha, horario_inicio, hora_fin, remuneracion, ctd_guardias, id_sede) VALUES (25,'2024-06-17', '20:00', '22:00', 60000, 5, 6);
+INSERT INTO TURNO (id_turno, fecha, horario_inicio, hora_fin, remuneracion, ctd_guardias, id_sede) VALUES (26,'2024-06-17', '20:00', '22:00', 60000, 5, 6);
+INSERT INTO TURNO (id_turno, fecha, horario_inicio, hora_fin, remuneracion, ctd_guardias, id_sede) VALUES (27,'2024-06-17', '113:00', '16:00', 60000, 5, 4);
 
 --PERFIL
 

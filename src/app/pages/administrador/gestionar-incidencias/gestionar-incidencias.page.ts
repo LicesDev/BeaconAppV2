@@ -1,5 +1,5 @@
 import { catchError } from 'rxjs/operators';
-
+import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
 import * as moment from 'moment-timezone';
 import { File } from '@awesome-cordova-plugins/file';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener';
-
+import * as ExcelJS from 'exceljs';
 import * as pdfMake from "pdfmake/build/pdfmake";
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
@@ -309,5 +309,83 @@ export class GestionarIncidenciasPage implements OnInit {
     }
     return dd;
   }
+  async confirmarCrearExcel() {
+    const result = await Swal.fire({
+      title: 'Confirmación',
+      text: '¿Estás seguro desea generar este informe?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, generar',
+      cancelButtonText: 'No, cancelar',
+      heightAuto: false,
+      confirmButtonColor: 'rgb(57, 88, 134)',
+    });
+
+    if (result.isConfirmed) {
+      this.generateAndSaveReport();
+    }
+  }
+  async createExcel(): Promise<ExcelJS.Buffer> {
+    // Crea un nuevo libro de trabajo y una hoja
+    const fecha = moment().tz('America/Santiago').format('YYYYMMDD_HHmm');
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Reporte Incidencias_'+fecha+'');
+    // Añade los datos
+
+    // Define las columnas
+    worksheet.columns = [
+      { header: 'ID', key: 'id', width: 10 },
+      { header: 'Sede', key: 'sede', width: 30 },
+      { header: 'Direccion', key: 'direccion', width: 30 },
+      { header: 'Fecha', key: 'fecha', width: 20 },
+      { header: 'Guardia', key: 'guardia', width: 20 },
+      { header: 'Detalle', key: 'detalle', width: 30 },
+
+    ];
+
+    this.incidencias.forEach(incidencia => {
+      worksheet.addRow({
+        id: incidencia.id_incidencia,
+        sede: incidencia.sede,
+        direccion: incidencia.direccion,
+        fecha: incidencia.fecha,
+        guardia: incidencia.guardia,
+        detalle: incidencia.detalle_incidencia,
+      });
+    });
+
+    // Escribe el libro de trabajo en formato binario
+    return await workbook.xlsx.writeBuffer();
+  }
+
+   uint8ArrayToBase64(buffer: Uint8Array) {
+    const binary = buffer.reduce((acc, byte) => acc + String.fromCharCode(byte), '');
+    return btoa(binary);
+  }
   
+  async saveFileToDevice(data: ExcelJS.Buffer) {
+    const fecha = moment().tz('America/Santiago').format('YYYYMMDD_HHmm');
+    const fileName = `reporte_incidencias_${fecha}.xlsx`;
+  
+    try {
+      await Filesystem.writeFile({
+        path: fileName,
+        data: this.uint8ArrayToBase64(new Uint8Array(data)),
+        directory: Directory.Documents,
+        recursive: true
+      });
+      console.log('File saved successfully.');
+    } catch (e) {
+      console.error('Unable to save file', e);
+    }
+  }
+
+  async generateAndSaveReport() {
+    try {
+      const excelBuffer = await this.createExcel();
+      await this.saveFileToDevice(excelBuffer);
+    } catch (error) {
+      console.error('Error generating or saving report:', error);
+    }
+  }
 }
