@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as bootstrap from 'bootstrap';
 import { HttpClient } from '@angular/common/http';
@@ -9,7 +9,7 @@ import { AuthService } from '../../../servicio/auth.service';
   templateUrl: './dash.page.html',
   styleUrls: ['./dash.page.scss'],
 })
-export class DashPage implements OnInit {
+export class DashPage implements OnInit, AfterViewInit {
   asignaciones: any[] = [];
 
 
@@ -24,7 +24,7 @@ export class DashPage implements OnInit {
       this.http
         .get(`https://osolices.pythonanywhere.com/asignacionturno/`)
         .subscribe((dataAs: any) => {
-          const asignacionesGuardia = dataAs.filter((dataAs: any) => dataAs.rut_guarida === rut);
+          const asignacionesGuardia = dataAs.filter((dataAs: any) => dataAs.rut_guarida === rut && !dataAs.estado  );
           
           console.log('A:',asignacionesGuardia)
 
@@ -94,6 +94,10 @@ export class DashPage implements OnInit {
         toggle: false,
       });
     }
+    this.getTurnosGuardia();
+  }
+
+  ngAfterViewInit() {
     this.getTurnosGuardia();
   }
 

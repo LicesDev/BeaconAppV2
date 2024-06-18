@@ -28,7 +28,7 @@ import * as moment from 'moment-timezone';
   styleUrls: ['./asistencia.page.scss'],
 })
 export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
-  valorDescuento:any;
+  valorDescuento=0;
   descuento:any;
   nombre: any;
   usuario: any = {};
@@ -459,7 +459,7 @@ this.http
   (descuento: any) => {
     console.log(descuento)
     this.valorDescuento = descuento.valor_dcto;
-    console.log(this.valorDescuento)
+    console.log('Valor descuento: '+this.valorDescuento)
   });
 
   }
@@ -478,6 +478,7 @@ this.http
 
     if (result.isConfirmed) {
       await this.comenzarTurno();
+      this.calcularDescuento();
     }
   }
   enviarCorreo(to_name: string, from_name: string, message: string) {
@@ -529,7 +530,7 @@ this.http
         });
       }
       const userData = window.localStorage.getItem('userData');
-
+      console.log('Aviso 1')
       this.cd.detectChanges(); // Detectar los cambios
       // Habilitar botones de colación e incidencia
       this.botonColacionHabilitado = true;
@@ -546,23 +547,23 @@ this.http
       // Obtener la hora actual y calcular la hora tope (2 horas en el futuro)
       const now = new Date();
       const endTime = new Date(now.getTime() + 2 * 60 * 60 * 1000); // 2 horas después
-      
+      console.log('Aviso 2')
       if (userData) {
         const parsedData = JSON.parse(userData);
         const pNombre = parsedData.p_nombre;
         const pApellido = parsedData.p_apellido;
         this.nombre = `${pNombre} ${pApellido}`;
-        
+        console.log('Aviso 3')
       }
-      
-      this.enviarCorreo('Daniel Santelices', this.nombre, 'El guardia comenzo su turno en la sede '+this.asignacion.nombre+' el día '+ now +'');
+      console.log('Aviso 4')
+     
       // Guardar la hora tope en el almacenamiento persistente
       await Preferences.set({
         key: 'endTime',
         value: endTime.getTime().toString(),
       });
       await Preferences.set({ key: 'turnoIniciado', value: 'true' });
-      this.iniciarSeguimientoUbicacionGuardia();
+
       // Iniciar el temporizador
       this.startCounter();
       // Obtener la hora actual y formatearla como "HH:MM"
@@ -570,10 +571,13 @@ this.http
       const horas = horaActual.getHours().toString().padStart(2, '0');
       const minutos = horaActual.getMinutes().toString().padStart(2, '0');
       const horaFormateada = `${horas}:${minutos}`;
-      await this.calcularDescuento();
+      
       // Obtener id_asignacion
       const idAsignacion = this.asignacion?.id_asignacion;
+      console.log('Remuneracion: '+this.asignacion?.remuneracion);
+      console.log('Descuento: '+this.valorDescuento);
       const remuneracion = (this.asignacion?.remuneracion * this.valorDescuento) + this.asignacion?.remuneracion;
+
       // Construir el cuerpo de la solicitud
       const body = {
         hora_ini_1: horaFormateada,
@@ -584,7 +588,7 @@ this.http
         id_descuento: this.descuento,
         id_asignacion: idAsignacion,
       };
-
+      console.log('Aviso 5')
       console.log(body);
       interface AsistenciaResponse {
         id_asistencia: number;
@@ -609,6 +613,7 @@ this.http
               value: JSON.stringify(asistenciaResponse),
             });
             this.toast('Turno Iniciado');
+            this.enviarCorreo('Daniel Santelices', this.nombre, 'El guardia comenzo su turno en la sede '+this.asignacion.nombre+' el día '+ now +'');
           },
           (error) => {
             console.error('Error al realizar la solicitud POST:', error);
@@ -797,11 +802,26 @@ this.http
               );
             }
             this.stopCounter();
-            this.toast('Turno Finalizado');
+            
             // Eliminar todos los datos de Preferences
             await Preferences.clear(); 
             console.log('Todos los datos de Preferences han sido eliminados.');
             this.cd.detectChanges();
+            const body={   
+                id_asignacion: this.asignacion.id_asignacion,
+                rut_guarida: this.asignacion.rut_guarida,
+                estado: 1,
+                id_turno: this.asignacion.id_turno
+            };
+            this.http.put(
+              `https://osolices.pythonanywhere.com/asignacionturno/${this.asignacion.id_asignacion}/`,
+              body
+            )
+            .subscribe(
+              async (response: any) => {
+                this.toast('Turno Finalizado');
+                this.router.navigate(['/dashguard']);
+              });
           },
           (error) => {
             console.error('Error al realizar la solicitud PUT:', error);
