@@ -15,12 +15,6 @@ export class NavbarAdminComponent  implements OnInit {
   constructor(private router: Router, private authService: AuthService) { }
 
   ngOnInit() {
-    let element = document.getElementById('navbarToggleExternalContent');
-    if (element) {
-      let bsCollapse = new bootstrap.Collapse(element, {
-        toggle: false,
-      });
-    }
   }
 
   logOut() {

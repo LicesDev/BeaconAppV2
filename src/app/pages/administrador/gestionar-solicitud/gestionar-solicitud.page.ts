@@ -57,10 +57,20 @@ export class GestionarSolicitudPage implements OnInit {
             .subscribe((tipo_sol: any) => {
               console.log(tipo_sol);
 
+            this.http
+            .get(
+              `https://osolices.pythonanywhere.com/guardia/${sol.rut_guarida}/`
+            )
+            .subscribe((guardia: any) => {
+              console.log(guardia);
+
+              
               sol.tipo_solicitud = tipo_sol.descripcion;
+              sol.guardia = guardia.p_nombre + ' ' +guardia.p_apellido;
 
               this.solicitudes.push(sol);
               console.log(this.solicitudes);
+            });
             });
         });
       });

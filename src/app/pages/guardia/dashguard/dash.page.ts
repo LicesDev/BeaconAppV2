@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd  } from '@angular/router';
 import * as bootstrap from 'bootstrap';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../servicio/auth.service';
@@ -16,6 +16,7 @@ export class DashPage implements OnInit, AfterViewInit {
   constructor(private router: Router, private http: HttpClient,private authService: AuthService) {}
 
   getTurnosGuardia() {
+    this.asignaciones = [];
     const userData = window.localStorage.getItem('userData');
     console.log(userData)
     if (userData) {
@@ -88,12 +89,6 @@ export class DashPage implements OnInit, AfterViewInit {
  
 
   ngOnInit() {
-    let element = document.getElementById('navbarToggleExternalContent');
-    if (element) {
-      let bsCollapse = new bootstrap.Collapse(element, {
-        toggle: false,
-      });
-    }
     this.getTurnosGuardia();
   }
 

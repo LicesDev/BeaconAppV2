@@ -296,30 +296,35 @@ toast(mensaje: string) {
 
 obtenerAsignaciones(id_turno: any) {
   this.asignaciones = [];
-  this.http.get(`https://osolices.pythonanywhere.com/asignacionturno/${id_turno}/`).subscribe(
+  this.http.get(`https://osolices.pythonanywhere.com/asignacionturno/by_id_turno/?id_turno=${id_turno}`).subscribe(
     (asignacion: any) => {
       console.log(asignacion);
-      this.http.get(`https://osolices.pythonanywhere.com/guardia/${asignacion.rut_guarida}/`).subscribe(
-        (guardia: any) => {
-          console.log(guardia);
-          asignacion.nombre = guardia.p_nombre + ' ' + guardia.p_apellido;
-          this.asignaciones.push(asignacion);
-          console.log(this.asignaciones);
-        },
-        (error: any) => {
-          console.error('Error al obtener datos del guardia:', error);
-        }
-      );
+      if (asignacion.length <= 0) { // Corregimos la condición aquí
+        this.toast('No existen asignaciones');
+        this.closeModal();
+      }
+      asignacion.forEach((guard:any) => {
+        this.http.get(`https://osolices.pythonanywhere.com/guardia/${guard.rut_guarida}/`).subscribe(
+          (guardia: any) => {
+            console.log(guardia);
+            guard.nombre = guardia.p_nombre + ' ' + guardia.p_apellido;
+          },
+          (error: any) => {
+            console.error('Error al obtener datos del guardia:', error);
+          }
+        );
+        this.asignaciones.push(guard); // Agrega el guardia al arreglo de asignaciones
+      });
     },
     (error: any) => {
       console.error('Error al obtener datos de asignación:', error);
       this.toast('No existen asignaciones');
-      this.closeModal();
-      // Cierra el modal aquí (reemplaza 'modal' con el nombre de tu modal)
+      this.closeModal(); // Cierra el modal aquí (reemplaza 'modal' con el nombre de tu modal)
       // Ejemplo: this.modal.dismiss();
     }
   );
 }
+
 
 
 async confirmarEliminarAsignacion(){

@@ -9,11 +9,12 @@
           <img alt="" class="qr" src="../../../../assets/img/formulario.png" />
         </ion-avatar>
         <ion-list>
-          <ion-label><p class="datos">Nro Solicitud: {{solicitud.id_solicitud}}</p></ion-label>
-          <ion-label><p class="datos">Tipo Solicitud: <br>{{solicitud.tipo_solicitud}} </p></ion-label>
-          <ion-label><p class="datos">Detalle: {{solicitud.detalle_solicitud}}</p></ion-label>
-          <ion-label><p class="datos">Estado: {{solicitud.estado}}</p></ion-label>
-          <ion-label><p class="datos">Justificación: {{ solicitud.justificacion || 'Sin justificación' }}</p></ion-label>
+          <ion-label><p class="datos"> <span style="font-weight: 700;">Nro Solicitud: </span>{{solicitud.id_solicitud}}</p></ion-label>
+          <ion-label><p class="datos"><span style="font-weight: 700;">Tipo Solicitud: </span>{{solicitud.tipo_solicitud}} </p></ion-label>
+          <ion-label><p class="datos"><span style="font-weight: 700;">Solicitante: </span>{{solicitud.guardia}}</p></ion-label>
+          <ion-label><p class="datos"><span style="font-weight: 700;">Detalle: </span>{{solicitud.detalle_solicitud}}</p></ion-label>
+          <ion-label><p class="datos"><span style="font-weight: 700;">Estado: </span>{{solicitud.estado}}</p></ion-label>
+          <ion-label><p class="datos"><span style="font-weight: 700;">Justificación: </span>{{ solicitud.justificacion || 'Sin justificación' }}</p></ion-label>
           
         </ion-list>
 

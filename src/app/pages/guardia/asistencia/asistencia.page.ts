@@ -140,9 +140,8 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
 
   async ngAfterViewInit() {
     setTimeout(() => {
-      this.detectDevice();
       this.detectCercania();
-    }, 5000);
+    }, 4000);
     // Recuperar el estado de los botones del almacenamiento local
     const { value: botonBuscarVisible } = await Preferences.get({
       key: 'botonBuscarVisible',
@@ -418,6 +417,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
         console.log('El guardia está cerca del punto.');
         this.toast('Baliza detectada')
         this.cercania=true;
+        this.detectDevice();
       } else {
         this.toast('Estas lejos de la baliza')
         console.log('El guardia no está cerca del punto.');
@@ -477,8 +477,9 @@ this.http
     });
 
     if (result.isConfirmed) {
+      await this.calcularDescuento();
       await this.comenzarTurno();
-      this.calcularDescuento();
+      
     }
   }
   enviarCorreo(to_name: string, from_name: string, message: string) {
@@ -575,17 +576,19 @@ this.http
       // Obtener id_asignacion
       const idAsignacion = this.asignacion?.id_asignacion;
       console.log('Remuneracion: '+this.asignacion?.remuneracion);
-      console.log('Descuento: '+this.valorDescuento);
-      const remuneracion = (this.asignacion?.remuneracion * this.valorDescuento) + this.asignacion?.remuneracion;
-
+      console.log('Descuento: ' + this.valorDescuento);
+      const remuneracion_ini = this.asignacion?.remuneracion;
+      const remuneracion = this.asignacion?.remuneracion - (this.asignacion?.remuneracion * this.valorDescuento) ;
+      const porc_descuento = this.valorDescuento * 100;
       // Construir el cuerpo de la solicitud
       const body = {
         hora_ini_1: horaFormateada,
         hora_fin_1: null,
         hora_ini_2: null,
         hora_fin_2: null,
+        remuneracion_inicial: remuneracion_ini,
         remuneracion_final: remuneracion,
-        id_descuento: this.descuento,
+        porc_descuento: porc_descuento,
         id_asignacion: idAsignacion,
       };
       console.log('Aviso 5')
@@ -596,8 +599,9 @@ this.http
         hora_fin_1: string | null;
         hora_ini_2: string | null;
         hora_fin_2: string | null;
+        remuneracion_inicial: number | null;
         remuneracion_final: number | null;
-        id_descuento: number;
+        porc_descuento: number;
         id_asignacion: number;
       }
       // Realizar la solicitud POST a la API
@@ -606,7 +610,7 @@ this.http
         .subscribe(
           (response: any) => {
             const asistenciaResponse = response as AsistenciaResponse;
-            console.log('Respuesta de la API:', asistenciaResponse);
+            console.log('Respuesta de la API crear:', asistenciaResponse);
             // Guardar todos los datos de la asistencia en el almacenamiento local
             Preferences.set({
               key: 'asistencia',
@@ -767,8 +771,9 @@ this.http
       hora_fin_1: string | null;
       hora_ini_2: string | null;
       hora_fin_2: string | null;
+      remuneracion_inicial: number | null;
       remuneracion_final: number | null;
-      id_descuento: number;
+      porc_descuento: number;
       id_asignacion: number;
     }
     const { value } = await Preferences.get({ key: 'asistencia' });
@@ -820,7 +825,10 @@ this.http
             .subscribe(
               async (response: any) => {
                 this.toast('Turno Finalizado');
-                this.router.navigate(['/dashguard']);
+                this.router.navigate(['/dashguard']).then(() => {
+                  window.location.reload();
+                });
+              
               });
           },
           (error) => {
@@ -855,8 +863,9 @@ this.http
       hora_fin_1: string | null;
       hora_ini_2: string | null;
       hora_fin_2: string | null;
+      remuneracion_inicial: number | null;
       remuneracion_final: number | null;
-      id_descuento: number;
+      porc_descuento: number;
       id_asignacion: number;
     }
     const { value } = await Preferences.get({ key: 'asistencia' });
@@ -942,8 +951,9 @@ this.http
       hora_fin_1: string | null;
       hora_ini_2: string | null;
       hora_fin_2: string | null;
+      remuneracion_inicial: number | null;
       remuneracion_final: number | null;
-      id_descuento: number;
+      porc_descuento: number;
       id_asignacion: number;
     }
     const { value } = await Preferences.get({ key: 'asistencia' });
