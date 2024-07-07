@@ -24,7 +24,7 @@
       </ion-item>
       <ion-item-options slot="end">
         <ion-item-option color="tertiary">
-          <ion-icon slot="icon-only" name="create" id="asignaciones" (click)="obtenerAsignaciones(turno.id_turno)"></ion-icon>
+          <ion-icon slot="icon-only" name="create" id="asignaciones-{{i}}" (click)="obtenerAsignaciones(turno.id_turno)"></ion-icon>
         </ion-item-option>
         <ion-item-option color="secondary">
           <ion-icon slot="icon-only" name="pencil" id="incidencia-{{i}}" (click)="obtenerSedes()"></ion-icon>
@@ -74,28 +74,30 @@
       </ng-template>
     </ion-modal>
 
+    <ion-modal class="asignacion" #modal trigger="asignaciones-{{i}}">
+      <ng-template>
+        <ion-content>
+          <ion-toolbar>
+            <ion-title>Modificar Asignaciones</ion-title>
+          </ion-toolbar>
+          <ion-list>   
+            <ion-item>
+            <ion-select #asignacionSelect  label="Guardias: " placeholder="">
+              <ion-select-option *ngFor="let asignacion of asignaciones; let j = index" lines="none" labelPlacement="floating" detail="false" [value]="asignacion">Guardia: {{asignacion.nombre}} {{asignacion.rut_guarida}}</ion-select-option>
+            </ion-select>   
+          </ion-item>
+            <ion-buttons class="btns">
+              <ion-button class="btncancelar" (click)="closeModal()">Cancelar</ion-button>
+              <ion-button class="btnenviar" [strong]="true" (click)="confirmarEliminarAsignacion()">Eliminar</ion-button>
+            </ion-buttons>
+          </ion-list>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+
   </ion-list>
 
-  <ion-modal class="asignacion" #modal trigger="asignaciones">
-    <ng-template>
-      <ion-content>
-        <ion-toolbar>
-          <ion-title>Modificar Asignaciones</ion-title>
-        </ion-toolbar>
-        <ion-list>   
-          <ion-item>
-          <ion-select #asignacionSelect  label="Guardias: " placeholder="">
-            <ion-select-option *ngFor="let asignacion of asignaciones; let j = index" lines="none" labelPlacement="floating" detail="false" [value]="asignacion">Guardia: {{asignacion.nombre}} {{asignacion.rut_guarida}}</ion-select-option>
-          </ion-select>   
-        </ion-item>
-          <ion-buttons class="btns">
-            <ion-button class="btncancelar" (click)="modal.dismiss()">Cancelar</ion-button>
-            <ion-button class="btnenviar" [strong]="true" (click)="confirmarEliminarAsignacion()">Eliminar</ion-button>
-          </ion-buttons>
-        </ion-list>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
+
   <div class="tope"></div>
   <div class="boton"><button class="botonGenerar" id="solicitud" (click)="obtenerSedes()" >Crear Turno</button></div>
 
@@ -105,12 +107,12 @@
     <ng-template>
       <ion-content>
         <ion-toolbar>
-          <ion-title>Modificar Turno</ion-title>
+          <ion-title>Crear Turno</ion-title>
         </ion-toolbar>
         <ion-list>
           <ion-item>
             <ion-select #sedeSelectC  label="Sedes: " placeholder="">
-              <ion-select-option *ngFor="let sede of sedes; let j = index" lines="none" labelPlacement="floating" detail="false" [value]="sede">{{sede.nombre}}</ion-select-option>
+              <ion-select-option *ngFor="let sede of sedes; let j = index" lines="none" labelPlacement="floating" detail="false" [value]="sede" >{{sede.nombre}}</ion-select-option>
             </ion-select>
           </ion-item>
           <ion-item>

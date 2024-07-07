@@ -142,7 +142,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.detectDevice();
       this.detectCercania();
-    }, 4000);
+    }, 5000);
     // Recuperar el estado de los botones del almacenamiento local
     const { value: botonBuscarVisible } = await Preferences.get({
       key: 'botonBuscarVisible',
@@ -389,9 +389,9 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async detectCercania() {
-    const sedeLat = -33.5984757;
-    const sedeLng = -70.5781949;
-    const radio = 0.1; // Define el radio en kilómetros
+    const sedeLat = -33.6074292;
+    const sedeLng = -70.5619337;
+    const radio = 0.2; // Define el radio en kilómetros
   
     try {
       const options: PositionOptions = {

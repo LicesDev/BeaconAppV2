@@ -69,7 +69,7 @@ export class GestionarSolicitudPage implements OnInit {
   async confirmarActualizar(id_solicitud: any) {
     const result = await Swal.fire({
       title: 'Confirmación',
-      text: '¿Estás seguro desea modificar este turno?',
+      text: '¿Desea modificar esta solicitud?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, modificar',
@@ -166,5 +166,9 @@ export class GestionarSolicitudPage implements OnInit {
 
     document.body.appendChild(toast);
     return toast.present();
+  }
+
+  async closeModal() {
+    await this.modalController.dismiss();
   }
 }

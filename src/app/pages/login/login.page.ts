@@ -20,6 +20,9 @@ export class LoginPage implements OnInit {
   usuario: string = '';
   pass: string = '';
   showPassword = false;
+
+  contadorFallido=4;
+
   constructor(
     private router: Router,
     private toastCtrl: ToastController,
@@ -67,6 +70,15 @@ export class LoginPage implements OnInit {
           if (error.status === 404) {
             // Muestra la alerta de usuario incorrecto
             this.toast('Usuario o contraseña incorrecto');
+            this.contadorFallido--
+            setTimeout(() => {
+              this.toast('Intentos restantes: ' + this.contadorFallido);
+            }, 1500);
+
+            if (this.contadorFallido===0) {
+              this.toast('Usuario bloqueado');
+              
+            }
           }
           return throwError(error);
         })

@@ -115,7 +115,7 @@ export class GestionarGuardiaPage implements OnInit {
   async confirmarActualizar(rut_guardia: any) {
     const result = await Swal.fire({
       title: 'Confirmación',
-      text: '¿Estás seguro desea modificar este turno?',
+      text: '¿Desea modificar este guardia?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, modificar',
@@ -195,7 +195,7 @@ export class GestionarGuardiaPage implements OnInit {
   async confirmarEliminar(rut_guardia: any) {
     const result = await Swal.fire({
       title: 'Confirmación',
-      text: '¿Estás seguro desea eliminar este turno?',
+      text: '¿Desea eliminar este guardia?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, eliminar',
@@ -229,7 +229,7 @@ export class GestionarGuardiaPage implements OnInit {
   async confirmarCrear() {
     const result = await Swal.fire({
       title: 'Confirmación',
-      text: '¿Estás seguro desea crear este turno?',
+      text: '¿Desea crear este guardia?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, crear',

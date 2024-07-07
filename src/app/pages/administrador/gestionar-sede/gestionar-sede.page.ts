@@ -50,7 +50,7 @@ export class GestionarSedePage implements OnInit {
     const value = ev.target!.value;
 
     // Removes non alphanumeric characters
-    const filteredValue = value.replace(/[^a-zA-Z0-9]+/g, '');
+    const filteredValue = value.replace(/[^a-zA-Z0-9 ]+/g, '');
 
 
     this.pNombreInputC.value = this.inputModelpNombre = filteredValue;
@@ -91,7 +91,7 @@ export class GestionarSedePage implements OnInit {
   async confirmarActualizar(id_sede: any) {
     const result = await Swal.fire({
       title: 'Confirmación',
-      text: '¿Estás seguro desea modificar este turno?',
+      text: '¿Desea modificar esta sede?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, modificar',
@@ -154,7 +154,7 @@ export class GestionarSedePage implements OnInit {
   async confirmarEliminar(id_sede: any) {
     const result = await Swal.fire({
       title: 'Confirmación',
-      text: '¿Estás seguro desea eliminar esta sede?',
+      text: '¿Desea eliminar esta sede?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, eliminar',
@@ -188,7 +188,7 @@ export class GestionarSedePage implements OnInit {
   async confirmarCrear() {
     const result = await Swal.fire({
       title: 'Confirmación',
-      text: '¿Estás seguro desea crear esta sede?',
+      text: '¿Desea crear esta sede?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, crear',

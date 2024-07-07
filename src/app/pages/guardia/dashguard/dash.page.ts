@@ -98,7 +98,6 @@ export class DashPage implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.getTurnosGuardia();
   }
 
   navegar(asignacion:any) {

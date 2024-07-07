@@ -10,6 +10,7 @@ import { IonSelect, IonTextarea, IonInput, IonDatetime } from '@ionic/angular';
 import { ChangeDetectorRef } from '@angular/core';
 import Swal from 'sweetalert2';
 
+
 @Component({
   selector: 'app-gestionar-turnos',
   templateUrl: './gestionar-turnos.page.html',
@@ -38,6 +39,12 @@ export class GestionarTurnosPage implements OnInit {
   @ViewChild('remuInputC') remuInputC!: IonInput;
   @ViewChild('sedeIDC') sedeIDC!: IonInput;
   
+  sede :any;
+  fecha :any;
+  hora_ini :any;
+  hora_fin :any;
+  remuneracion: any;
+  ctd_guardias :any;
 
   constructor(
     private router: Router,
@@ -96,7 +103,7 @@ export class GestionarTurnosPage implements OnInit {
   async confirmarActualizar(id_turno: any) {
     const result = await Swal.fire({
       title: 'Confirmación',
-      text: '¿Estás seguro desea modificar este turno?',
+      text: '¿Desea modificar este turno?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, modificar',
@@ -158,7 +165,7 @@ const body=  {
 async confirmarEliminar(id_turno: any) {
   const result = await Swal.fire({
     title: 'Confirmación',
-    text: '¿Estás seguro desea eliminar este turno?',
+    text: '¿Desea eliminar este turno?',
     icon: 'warning',
     showCancelButton: true,
     confirmButtonText: 'Sí, eliminar',
@@ -191,7 +198,7 @@ eliminarTurno(id_turno: any) {
 async confirmarCrear() {
   const result = await Swal.fire({
     title: 'Confirmación',
-    text: '¿Estás seguro desea crear este turno?',
+    text: 'Desea crear este turno?',
     icon: 'warning',
     showCancelButton: true,
     confirmButtonText: 'Sí, crear',
@@ -206,30 +213,59 @@ async confirmarCrear() {
 }
 
 crearTurno(){
-  console.log(this.sedeSelectC.value.id_sede)
-
-  const sede = this.sedeSelectC.value.id_sede;
-  const fecha = this.fechaInputC.value;
-  const hora_ini = this.horaIniInputC.value;
-  const hora_fin = this.horaFinInputC.value;
-  const remuneracion = this.remuInputC.value;
-  const ctd_guardias = this.ctdGuardiasInputC.value;
 
 
-  console.log(sede);
-  console.log(fecha);
-  console.log(hora_ini);
-  console.log(hora_fin);
-  console.log(remuneracion);
-  console.log(ctd_guardias);
+  if (this.sedeSelectC.value) {
+    this.sede = this.sedeSelectC.value.id_sede;
+  } else {
+    this.toast('Debes seleccionar una sede');
+    return; 
+  }
+  if (this.fechaInputC.value) {
+    this.fecha = this.fechaInputC.value;
+  } else {
+    this.toast('Debes ingresar una fecha');
+    return; 
+  }
+  if (this.horaIniInputC.value) {
+    this.hora_ini = this.horaIniInputC.value;
+  } else {
+    this.toast('Debes ingresar una hora de inicio');
+    return; 
+  }
+  if (this.horaFinInputC.value) {
+    this.hora_fin = this.horaFinInputC.value;
+  } else {
+    this.toast('Debes ingresar una hora de termino');
+    return; 
+  }
+  if (this.remuInputC.value) {
+    this.remuneracion = this.remuInputC.value;
+  } else {
+    this.toast('Debes ingresar una remuneración');
+    return; 
+  }
+  if (this.ctdGuardiasInputC.value) {
+    this.ctd_guardias = this.ctdGuardiasInputC.value;
+  } else {
+    this.toast('Debes ingresar una cantidad de guardias');
+    return;  
+  }
+  
+  console.log(this.sede);
+  console.log(this.fecha);
+  console.log(this.hora_ini);
+  console.log(this.hora_fin);
+  console.log(this.remuneracion);
+  console.log(this.ctd_guardias);
 
 const body=  {
-  fecha: fecha,
-  horario_inicio: hora_ini,
-  hora_fin: hora_fin,
-  remuneracion: remuneracion,
-  ctd_guardias: ctd_guardias,
-  id_sede: sede
+  fecha: this.fecha,
+  horario_inicio: this.hora_ini,
+  hora_fin: this.hora_fin,
+  remuneracion: this.remuneracion,
+  ctd_guardias: this.ctd_guardias,
+  id_sede: this.sede
 };
 
 this.http.post(`https://osolices.pythonanywhere.com/turno/`, body)
@@ -258,28 +294,41 @@ toast(mensaje: string) {
   return toast.present();
 }
 
-obtenerAsignaciones(id_turno:any){
+obtenerAsignaciones(id_turno: any) {
   this.asignaciones = [];
-  this.http.get(`https://osolices.pythonanywhere.com/asignacionturno/${id_turno}/`).subscribe((asignacion: any) => {
-    console.log(asignacion);
-    this.http.get(`https://osolices.pythonanywhere.com/guardia/${asignacion.rut_guarida}/`).subscribe((guardia: any) => {
-      console.log(guardia);
-
-      asignacion.nombre = guardia.p_nombre + guardia.p_apellido;
-
-        this.asignaciones.push(asignacion);
-        console.log(this.asignaciones)
-      });
-    });
+  this.http.get(`https://osolices.pythonanywhere.com/asignacionturno/${id_turno}/`).subscribe(
+    (asignacion: any) => {
+      console.log(asignacion);
+      this.http.get(`https://osolices.pythonanywhere.com/guardia/${asignacion.rut_guarida}/`).subscribe(
+        (guardia: any) => {
+          console.log(guardia);
+          asignacion.nombre = guardia.p_nombre + ' ' + guardia.p_apellido;
+          this.asignaciones.push(asignacion);
+          console.log(this.asignaciones);
+        },
+        (error: any) => {
+          console.error('Error al obtener datos del guardia:', error);
+        }
+      );
+    },
+    (error: any) => {
+      console.error('Error al obtener datos de asignación:', error);
+      this.toast('No existen asignaciones');
+      this.closeModal();
+      // Cierra el modal aquí (reemplaza 'modal' con el nombre de tu modal)
+      // Ejemplo: this.modal.dismiss();
+    }
+  );
 }
+
 
 async confirmarEliminarAsignacion(){
   const result = await Swal.fire({
     title: 'Confirmación',
-    text: '¿Estás seguro desea crear este turno?',
+    text: '¿Desea eliminar esta asignacion?',
     icon: 'warning',
     showCancelButton: true,
-    confirmButtonText: 'Sí, crear',
+    confirmButtonText: 'Sí, eliminar',
     cancelButtonText: 'No, cancelar',
     heightAuto: false,
     confirmButtonColor: 'rgb(57, 88, 134)',
@@ -308,6 +357,9 @@ eliminarAsignacion(){
     }
   );
 
+}
+async closeModal() {
+  await this.modalController.dismiss();
 }
 
 
