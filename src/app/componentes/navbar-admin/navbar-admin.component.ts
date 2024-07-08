@@ -18,7 +18,9 @@ export class NavbarAdminComponent  implements OnInit {
   }
 
   logOut() {
-    this.authService.logout(); // Llama al método logout de AuthServiceService aquí
-    this.router.navigate(['/login']);
+    this.authService.logout(); 
+    this.router.navigate(['/login']).then(() => {
+      window.location.reload();
+    });
   }
 }

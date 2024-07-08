@@ -229,6 +229,8 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
     // Asegurarse de que no hay otros intervalos ejecutándose antes de crear uno nuevo
     if (this.intervalId) {
       clearInterval(this.intervalId);
+      this.tiempoRestante = 2 * 60 * 60;
+      this.botonPermanenciaHabilitado = false;
     }
 
     this.intervalId = setInterval(async () => {
@@ -352,7 +354,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
               scanResult.device.name === targetDeviceName
             ) {
               console.log('BALIZA OBJETIVO ENCONTRADA:', scanResult.device);
-
+              this.toast('Baliza detectada')
               this.botonTurnoHabilitado = true;
               deviceFound = true;
               let buscar = document.getElementById('buscando');
@@ -415,7 +417,7 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
   
       if (distancia <= radio) {
         console.log('El guardia está cerca del punto.');
-        this.toast('Baliza detectada')
+        this.toast('Estas cerca de la baliza')
         this.cercania=true;
         this.detectDevice();
       } else {
@@ -643,9 +645,10 @@ this.http
     // Restablecer el temporizador y desactivar el botón de permanencia
     this.tiempoRestante = 2 * 60 * 60;
     this.botonPermanenciaHabilitado = false;
-    // Reiniciar el contador
-    this.startCounter();
+
     this.cd.detectChanges();
+    this.toast('Permanencia marcada correctamente')
+    this.startCounter();
   }
 
 
@@ -825,9 +828,12 @@ this.http
             .subscribe(
               async (response: any) => {
                 this.toast('Turno Finalizado');
-                this.router.navigate(['/dashguard']).then(() => {
-                  window.location.reload();
-                });
+                setTimeout(() => {
+                  this.router.navigate(['/dashguard']).then(() => {
+                    window.location.reload();
+                  });
+                }, 2000);
+                
               
               });
           },
