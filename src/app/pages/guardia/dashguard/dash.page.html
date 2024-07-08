@@ -21,12 +21,12 @@
               </ion-card-header>
               <p class="seccion">Fecha: {{asignacion.fecha}}</p>
               <p class="seccion">Dirección: {{asignacion.direccion}}</p>
+              <p class="seccion">Hora inicio: {{asignacion.hora_inicio}}</p>
               <ion-card-content>
   
                 <ion-img *ngIf="!asignacion.expanded" src="./../../../assets/img/flecha.png" class="flecha"></ion-img>
   
                 <div *ngIf="asignacion.expanded" >
-                  <p class="seccion">Hora inicio: {{asignacion.hora_inicio}}</p>
                   <p class="seccion">Hora termino: {{asignacion.hora_fin}}</p>
                   <p class="seccion">Remuneración: ${{asignacion.remuneracion}}</p>
                   <ion-img *ngIf="asignacion.expanded" src="./../../../assets/img/flecha2.png" class="flecha"></ion-img>

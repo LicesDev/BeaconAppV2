@@ -10,11 +10,11 @@
         </ion-avatar>
         <ion-list>        
           <ion-label style="padding-top: 10px;" ><h5 style="color: #395886; font-weight: 700;">{{turno.nombre}}</h5></ion-label>
-          <ion-label><p class="datos">Fecha: {{turno.fecha}}</p></ion-label>
-          <ion-label><p class="datos">Guardias solicitados: {{turno.ctd_guardias}}</p></ion-label>
-          <ion-label><p class="datos">Hora inicio: {{turno.horario_inicio}}</p></ion-label>
-          <ion-label><p class="datos">Hora término: {{turno.hora_fin}}</p></ion-label>
-          <ion-label style="padding-bottom: 10px;"><p class="datos" >Remuneración: $ {{ turno.remuneracion | currency:'CLP':'':'1.0-0':'es-CL' }}</p></ion-label>
+          <ion-label><p class="datos"><span style="font-weight: 700;">Fecha: </span>{{turno.fecha}}</p></ion-label>
+          <ion-label><p class="datos"><span style="font-weight: 700;">Guardias solicitados: </span>{{turno.ctd_guardias}}</p></ion-label>
+          <ion-label><p class="datos"><span style="font-weight: 700;">Hora inicio: </span>{{turno.horario_inicio}}</p></ion-label>
+          <ion-label><p class="datos"><span style="font-weight: 700;">Hora término: </span>{{turno.hora_fin}}</p></ion-label>
+          <ion-label style="padding-bottom: 10px;"><p class="datos" ><span style="font-weight: 700;">Remuneración: </span>$ {{ turno.remuneracion | currency:'CLP':'':'1.0-0':'es-CL' }}</p></ion-label>
         </ion-list>
 
         <ion-list>

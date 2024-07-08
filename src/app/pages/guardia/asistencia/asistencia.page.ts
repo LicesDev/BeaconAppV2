@@ -390,8 +390,8 @@ export class AsistenciaPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async detectCercania() {
-    const sedeLat = -33.6074292;
-    const sedeLng = -70.5619337;
+    const sedeLat = -33.5979631;
+    const sedeLng = -70.57808;
     const radio = 0.2; // Define el radio en kilómetros
   
     try {

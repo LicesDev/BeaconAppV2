@@ -153,6 +153,8 @@ const body=  {
       response => {
         console.log(response);
         this.toast('Turno Modificado exitosamente')
+        this.turnos = [];
+        this.getTurnos();
         this.modalController.dismiss();
       },
       error => {

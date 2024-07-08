@@ -313,6 +313,18 @@ export class GestionarGuardiaPage implements OnInit {
               (error) => {
                 console.error(error);
                 this.toast('Error al crear');
+                const autentificar = response.id_autentificar;
+                this.http
+                .delete(`https://osolices.pythonanywhere.com/autentificar/${autentificar}/`)
+                .subscribe(
+                  (response) => {
+                    console.log(response);
+                  },
+                  (error) => {
+                    console.error(error);
+                  }
+                );
+
               }
             );
         },
